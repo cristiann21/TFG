@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Iniciar Sesión - EduCreativo'])
+@extends('layouts.app', ['title' => 'Iniciar Sesión - Pincode'])
 
 @section('content')
 <div class="auth-container notebook-bg">

@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => $course->title . ' - EduCreativo'])
+@extends('layouts.app', ['title' => $course->title . ' - PinCode'])
 
 @section('content')
 <div class="course-detail-page notebook-bg">

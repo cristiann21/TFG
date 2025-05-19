@@ -3,7 +3,7 @@
         <div class="header-content">
             <div class="logo">
                 <a href="{{ route('home') }}">
-                    <img src="{{ asset('images/logo.png') }}" alt="EduCreativo Logo">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo">
                     <h1>PinCode</h1>
                 </a>
             </div>

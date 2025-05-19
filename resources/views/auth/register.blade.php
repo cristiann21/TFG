@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Registro - EduCreativo'])
+@extends('layouts.app', ['title' => 'Registro - PinCode'])
 
 @section('content')
 <div class="auth-container notebook-bg">
