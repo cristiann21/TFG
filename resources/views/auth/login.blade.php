@@ -5,7 +5,7 @@
     <div class="container">
         <div class="auth-box">
             <a href="{{ route('home') }}" class="logo-link">
-                <img src="{{ asset('images/logo-edu.png') }}" alt="Logo" class="logo-small">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo-small">
                 <h1>PinCode</h1>
             </a>
             
