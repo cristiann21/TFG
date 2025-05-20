@@ -51,6 +51,7 @@ class CourseSeeder extends Seeder
                 'level' => 'Principiante',
                 'language' => 'JavaScript',
                 'category_id' => 1,
+                
             ],
             [
                 'title' => 'Python para Ciencia de Datos',

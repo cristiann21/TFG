@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -7,26 +7,54 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
-// Rutas públicas
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
-Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
+// ==================================================
+// ** RUTAS DE RESTABLECIMIENTO **
+// ==================================================
+Route::controller(ForgotPasswordController::class)->group(function () {
+    Route::get('forgot-password', 'showForgetPasswordForm')->name('password.request');
+    Route::post('forgot-password', 'submitForgetPasswordForm')->name('password.email');
+    Route::get('reset-password/{token}', 'showResetPasswordForm')->name('password.reset');
+    Route::post('reset-password', 'submitResetPasswordForm')->name('password.update');
+});
 
-// Rutas de autenticación
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/reset-password', [AuthController::class, 'showResetForm'])->name('password.request');
-Route::post('/reset-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+// ==================================================
+// ** RUTAS PÚBLICAS **
+// ==================================================
+Route::middleware('guest')->group(function () {
+    Route::controller(AuthController::class)->group(function () {
+        Route::get('/login', 'showLoginForm')->name('login');
+        Route::post('/login', 'login');
+        Route::get('/register', 'showRegisterForm')->name('register');
+        Route::post('/register', 'register');
+    });
+});
 
-// Rutas protegidas
+// ==================================================
+// ** RUTAS PROTEGIDAS **
+// ==================================================
 Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-    Route::get('/my-courses', [ProfileController::class, 'courses'])->name('my-courses');
-    Route::post('/purchase/{course}', [PurchaseController::class, 'store'])->name('purchase.store');
-    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
-    Route::post('/subscriptions', [SubscriptionController::class, 'store'])->name('subscriptions.store');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    
+    Route::controller(CourseController::class)->group(function () {
+        Route::get('/courses', 'index')->name('courses.index');
+        Route::get('/courses/{course}', 'show')->name('courses.show');
+    });
+    
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/profile', 'index')->name('profile');
+        Route::get('/my-courses', 'courses')->name('my-courses');
+    });
+    
+    Route::controller(PurchaseController::class)->group(function () {
+        Route::post('/purchase/{course}', 'store')->name('purchase.store');
+    });
+    
+    Route::controller(SubscriptionController::class)->group(function () {
+        Route::get('/subscriptions', 'index')->name('subscriptions.index');
+        Route::post('/subscriptions', 'store')->name('subscriptions.store');
+    });
+    
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
