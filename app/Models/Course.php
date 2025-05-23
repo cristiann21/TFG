@@ -20,6 +20,7 @@ class Course extends Model
         'created_by',
         'language', // Nuevo campo para el lenguaje de programación
         'category_id', // Relación con categorías
+        'instructor_id'
     ];
 
     public function teacher()
@@ -29,7 +30,13 @@ class Course extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'cursos_usuarios', 'cursos_id', 'user_id');
+        return $this->belongsToMany(User::class, 'course_user')
+            ->withTimestamps();
+    }
+
+    public function instructor()
+    {
+        return $this->belongsTo(User::class, 'instructor_id');
     }
 
     public function category()

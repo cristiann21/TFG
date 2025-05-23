@@ -20,18 +20,24 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/');
+
+            // Si se solicitó acceso como profesor, actualizar el rol
+            if ($request->has('role') && $request->role === 'teacher') {
+                auth()->user()->update(['role' => 'teacher']);
+            }
+
+            return redirect()->intended(route('home'));
         }
 
         return back()->withErrors([
             'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
-        ]);
+        ])->onlyInput('email');
     }
 
     public function showRegisterForm()
@@ -44,8 +50,13 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:3|confirmed',
-            'accept_terms' => 'required',
+            'password' => 'required|string|min:3|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+            'terms' => 'required|accepted',
+        ], [
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.regex' => 'La contraseña debe contener al menos una letra mayúscula, una minúscula y un número.',
+            'terms.required' => 'Debes aceptar los términos y condiciones.',
+            'terms.accepted' => 'Debes aceptar los términos y condiciones.',
         ]);
 
         $user = User::create([
@@ -56,7 +67,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/');
+        return redirect('/')->with('success', '¡Bienvenido a PinCode! Tu cuenta ha sido creada exitosamente.');
     }
 
     public function logout(Request $request)

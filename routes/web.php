@@ -8,6 +8,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\TeacherRequestController;
 
 // ==================================================
 // ** RUTAS DE RESTABLECIMIENTO **
@@ -32,18 +35,36 @@ Route::middleware('guest')->group(function () {
 });
 
 // ==================================================
+// ** RUTAS DE PÁGINAS ESTÁTICAS **
+// ==================================================
+Route::controller(PageController::class)->group(function () {
+    Route::get('/about', 'about')->name('about');
+    Route::get('/contact', 'contact')->name('contact');
+    Route::get('/terms', 'terms')->name('terms');
+    Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+});
+
+// ==================================================
 // ** RUTAS PROTEGIDAS **
 // ==================================================
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses', 'index')->name('courses.index');
         Route::get('/courses/{course}', 'show')->name('courses.show');
+        Route::get('/courses/create', 'create')->name('courses.create');
+        Route::post('/courses', 'store')->name('courses.store');
+        Route::get('/courses/{course}/edit', 'edit')->name('courses.edit');
+        Route::put('/courses/{course}', 'update')->name('courses.update');
+        Route::delete('/courses/{course}', 'destroy')->name('courses.destroy');
     });
     
     Route::controller(ProfileController::class)->group(function () {
-        Route::get('/profile', 'index')->name('profile');
         Route::get('/my-courses', 'courses')->name('my-courses');
     });
     
@@ -55,6 +76,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/subscriptions', 'index')->name('subscriptions.index');
         Route::post('/subscriptions', 'store')->name('subscriptions.store');
     });
+    
+    Route::get('/teacher-request', [TeacherRequestController::class, 'show'])->name('teacher-request.show');
+    Route::post('/teacher-request', [TeacherRequestController::class, 'store'])->name('teacher-request.store');
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

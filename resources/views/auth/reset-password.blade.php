@@ -1,44 +1,55 @@
-@extends('layouts.app', ['title' => 'Restablecer Contraseña'])
+@extends('layouts.app', ['title' => 'Restablecer Contraseña - PinCode', 'hideFooter' => true, 'hideHeader' => true])
 
 @section('content')
-<div class="auth-container notebook-bg">
-    <div class="container">
-        <div class="auth-box">
-            <div class="postit-note green-note auth-form-container">
-                <h2>Restablecer Contraseña</h2>
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="postit-note yellow-note auth-card">
+            <h2>Restablecer Contraseña</h2>
+            <p>Ingresa tu nueva contraseña para continuar</p>
+            
+            <form method="POST" action="{{ route('password.update') }}" class="auth-form">
+                @csrf
+                <input type="hidden" name="token" value="{{ $token }}">
                 
-                <form action="{{ route('password.update') }}" method="POST" class="auth-form">
-                    @csrf
-                    <input type="hidden" name="token" value="{{ $token }}">
-                    
-                    <div class="form-group">
-                        <label for="email">Correo Electrónico</label>
-                        <input type="email" id="email" name="email" 
-                               value="{{ $email ?? old('email') }}" 
-                               required autofocus>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Nueva Contraseña</label>
-                        <input type="password" id="password" name="password" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password_confirmation">Confirmar Contraseña</label>
-                        <input type="password" id="password_confirmation" 
-                               name="password_confirmation" required>
-                    </div>
-                    
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ $email ?? old('email') }}" required autofocus>
                     @error('email')
-                        <div class="error-message">{{ $message }}</div>
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
                     @enderror
-                    
-                    <button type="submit" class="btn btn-green">Restablecer Contraseña</button>
-                </form>
+                </div>
                 
-                <div class="note-corner"></div>
+                <div class="form-group">
+                    <label for="password">Nueva contraseña</label>
+                    <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
+                    @error('password')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                
+                <div class="form-group">
+                    <label for="password_confirmation">Confirmar contraseña</label>
+                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    Restablecer Contraseña
+                </button>
+            </form>
+
+            <div class="auth-links">
+                <p>¿Recordaste tu contraseña? <a href="{{ route('login') }}">Inicia sesión</a></p>
             </div>
+            <div class="note-corner"></div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/style.css') }}">
+@endpush

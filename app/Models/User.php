@@ -15,6 +15,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
+        'role',
     ];
 
     protected $hidden = [
@@ -29,7 +31,8 @@ class User extends Authenticatable
 
     public function courses()
     {
-        return $this->belongsToMany(Course::class, 'cursos_usuarios', 'user_id', 'cursos_id');
+        return $this->belongsToMany(Course::class, 'course_user')
+            ->withTimestamps();
     }
 
     public function purchases()
@@ -40,5 +43,15 @@ class User extends Authenticatable
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function isTeacher()
+    {
+        return $this->role === 'teacher';
+    }
+
+    public function isStudent()
+    {
+        return $this->role === 'student';
     }
 }

@@ -87,17 +87,6 @@
         </div>
     </section>
 
-    <!-- Call to Action - Paper Style -->
-    <section class="cta">
-        <div class="container">
-            <div class="cta-content">
-                <h2>¿Listo para comenzar tu viaje de aprendizaje?</h2>
-                <p>Únete a nuestra comunidad de estudiantes y comienza a aprender hoy mismo.</p>
-                <a href="{{ route('register') }}" class="btn btn-primary">Registrarse Ahora</a>
-            </div>
-        </div>
-    </section>
-
     <!-- Testimonials - Post-it Style -->
     <section class="testimonials cork-bg">
         <div class="container">
