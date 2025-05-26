@@ -8,18 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('suscripciones', function (Blueprint $table) {
+        Schema::create('purchases', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->string('plan');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->decimal('total', 8, 2);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('suscripciones');
+        Schema::dropIfExists('purchases');
     }
-};
+}; 

@@ -9,7 +9,7 @@ class Subscription extends Model
 {
     use HasFactory;
 
-    protected $table = 'suscripciones';
+    protected $table = 'subscriptions';
 
     protected $fillable = [
         'user_id',
@@ -27,4 +27,4 @@ class Subscription extends Model
     {
         return $this->belongsTo(User::class);
     }
-}
+} 

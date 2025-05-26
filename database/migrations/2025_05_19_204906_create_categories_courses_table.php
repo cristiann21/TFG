@@ -15,7 +15,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('cursos', function (Blueprint $table) {
+        Schema::table('courses', function (Blueprint $table) {
             $table->string('language')->nullable()->after('level');
             $table->foreignId('category_id')->nullable()->after('language')->constrained('categories')->onDelete('set null');
         });
@@ -23,11 +23,11 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('cursos', function (Blueprint $table) {
+        Schema::table('courses', function (Blueprint $table) {
             $table->dropForeign(['category_id']);
             $table->dropColumn(['language', 'category_id']);
         });
 
         Schema::dropIfExists('categories');
     }
-};
+}; 
