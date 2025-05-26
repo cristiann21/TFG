@@ -92,4 +92,25 @@ class CourseController extends Controller
 
         return view('courses.show', compact('course', 'relatedCourses'));
     }
+
+    public function obtain(Course $course)
+    {
+        $user = auth()->user();
+        if ($user->getRemainingCourses() <= 0) {
+            return redirect()->back()->with('error', 'No tienes cursos disponibles para obtener.');
+        }
+
+        // Añadir el curso al usuario
+        $user->courses()->attach($course->id);
+
+        return redirect()->back()->with('success', 'Curso obtenido con éxito.');
+    }
+
+    public function addToFavorites(Course $course)
+    {
+        $user = auth()->user();
+        $user->favorites()->attach($course->id);
+
+        return redirect()->back()->with('success', 'Curso añadido a favoritos.');
+    }
 }

@@ -51,9 +51,11 @@ Route::controller(PageController::class)->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    
+    Route::get('/profile/courses', [ProfileController::class, 'courses'])->name('profile.courses');
     
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses', 'index')->name('courses.index');
@@ -63,6 +65,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/courses/{course}/edit', 'edit')->name('courses.edit');
         Route::put('/courses/{course}', 'update')->name('courses.update');
         Route::delete('/courses/{course}', 'destroy')->name('courses.destroy');
+        Route::post('/courses/{course}/obtain', 'obtain')->name('courses.obtain');
+        Route::post('/courses/{course}/addToFavorites', 'addToFavorites')->name('courses.addToFavorites');
     });
     
     Route::controller(ProfileController::class)->group(function () {
@@ -76,6 +80,8 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(SubscriptionController::class)->group(function () {
         Route::get('/subscriptions', 'index')->name('subscriptions.index');
         Route::post('/subscriptions', 'store')->name('subscriptions.store');
+        Route::post('/subscriptions/subscribe', 'subscribe')->name('subscriptions.subscribe');
+        Route::post('/subscriptions/cancel', 'cancel')->name('subscriptions.cancel');
     });
     
     Route::get('/teacher-request', [TeacherRequestController::class, 'show'])->name('teacher-request.show');

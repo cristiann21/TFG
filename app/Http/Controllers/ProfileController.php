@@ -29,14 +29,14 @@ class ProfileController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('profile')->with('success', 'Perfil actualizado correctamente');
+        return redirect()->route('profile.index')->with('success', 'Perfil actualizado correctamente');
     }
 
     public function courses()
     {
         $user = auth()->user();
-        $courses = $user->courses()->paginate(12);
-        
-        return view('profile.courses', compact('courses'));
+        return view('profile.courses', [
+            'courses' => $user->courses
+        ]);
     }
 } 

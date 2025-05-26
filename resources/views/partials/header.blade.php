@@ -22,7 +22,7 @@
                     <div class="user-menu">
                         <span>{{ Auth::user()->name }}</span>
                         <div class="dropdown-menu">
-                            <a href="{{ route('profile') }}">Mi Perfil</a>
+                            <a href="{{ route('profile.index') }}">Mi Perfil</a>
                             <a href="{{ route('my-courses') }}">Mis Cursos</a>
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
@@ -52,7 +52,7 @@
         <li><a href="#">Sobre Nosotros</a></li>
         <li><a href="#">Contacto</a></li>
         @auth
-            <li><a href="{{ route('profile') }}">Mi Perfil</a></li>
+            <li><a href="{{ route('profile.index') }}">Mi Perfil</a></li>
             <li><a href="{{ route('my-courses') }}">Mis Cursos</a></li>
             <li>
                 <form action="{{ route('logout') }}" method="POST">

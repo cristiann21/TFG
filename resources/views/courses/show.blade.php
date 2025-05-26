@@ -357,6 +357,15 @@
                             
                             <div class="course-actions">
                                 @auth
+                                    @if(auth()->user()->getRemainingCourses() > 0)
+                                        <form action="{{ route('courses.obtain', $course->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success">Obtener curso</button>
+                                        </form>
+                                        <p class="mt-2">Cursos restantes: {{ auth()->user()->getRemainingCourses() }}</p>
+                                    @else
+                                        <p class="text-danger">No tienes cursos disponibles para obtener.</p>
+                                    @endif
                                     @if(!auth()->user()->courses()->where('course_id', $course->id)->exists())
                                         <form action="{{ route('cart.add', $course) }}" method="POST" class="inline">
                                             @csrf
@@ -369,11 +378,6 @@
                                                 Añadir al Carrito
                                             </button>
                                         </form>
-                                        @if(session('error'))
-                                            <div class="text-green-600 mt-2 text-sm">
-                                                {{ session('error') }}
-                                            </div>
-                                        @endif
                                     @else
                                         <button disabled class="btn btn-secondary btn-block cursor-not-allowed">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
@@ -394,10 +398,15 @@
                                     </a>
                                 @endauth
                                 <button class="btn btn-outline btn-block">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                    </svg>
-                                    Añadir a Favoritos
+                                    <form action="{{ route('courses.addToFavorites', $course->id) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-outline btn-block">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                            Añadir a Favoritos
+                                        </button>
+                                    </form>
                                 </button>
                             </div>
                             

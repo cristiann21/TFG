@@ -45,6 +45,14 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
+    public function hasActiveSubscription()
+    {
+        return $this->subscriptions()
+            ->where('is_active', true)
+            ->where('ends_at', '>', now())
+            ->exists();
+    }
+
     public function isTeacher()
     {
         return $this->role === 'teacher';
@@ -58,5 +66,23 @@ class User extends Authenticatable
     public function cartItems()
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    public function getRemainingCourses()
+    {
+        $subscription = $this->subscriptions()->where('is_active', true)->first();
+        if (!$subscription) {
+            return 0;
+        }
+
+        $maxCourses = $subscription->plan_type === 'premium' ? 10 : 5; // Premium: 10 cursos, Basic: 5 cursos
+        $acquiredCourses = $this->courses()->count();
+
+        return max(0, $maxCourses - $acquiredCourses);
+    }
+
+    public function favorites()
+    {
+        return $this->belongsToMany(Course::class, 'favorites')->withTimestamps();
     }
 }

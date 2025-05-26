@@ -34,7 +34,7 @@
                     <i class="fas fa-save"></i>
                     Guardar Cambios
                 </button>
-                <a href="{{ route('profile') }}" class="btn btn-outline">
+                <a href="{{ route('profile.index') }}" class="btn btn-outline">
                     <i class="fas fa-times"></i>
                     Cancelar
                 </a>

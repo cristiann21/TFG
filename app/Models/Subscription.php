@@ -13,18 +13,28 @@ class Subscription extends Model
 
     protected $fillable = [
         'user_id',
-        'plan',
-        'start_date',
-        'end_date',
+        'plan_type',
+        'price',
+        'starts_at',
+        'ends_at',
+        'is_active',
+        'payment_status'
     ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+        'is_active' => 'boolean',
+        'price' => 'decimal:2'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function isActive()
+    {
+        return $this->is_active && $this->ends_at->isFuture();
     }
 } 

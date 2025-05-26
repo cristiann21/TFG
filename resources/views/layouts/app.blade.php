@@ -30,6 +30,13 @@
                         <ul>
                             <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Inicio</a></li>
                             <li><a href="{{ route('courses.index') }}" class="{{ request()->routeIs('courses.*') ? 'active' : '' }}">Cursos</a></li>
+                            <li><a href="{{ route('subscriptions.index') }}" class="{{ request()->routeIs('subscriptions.*') ? 'active' : '' }}">
+                                @if(auth()->check() && auth()->user()->hasActiveSubscription())
+                                    <span class="text-green-400">Suscripción Activa</span>
+                                @else
+                                    Suscripciones
+                                @endif
+                            </a></li>
                             <li><a href="{{ route('about') }}" class="{{ request()->routeIs('about') ? 'active' : '' }}">Nosotros</a></li>
                             <li><a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">Contacto</a></li>
                         </ul>
@@ -38,24 +45,14 @@
                     <div class="auth-buttons">
                         <div class="flex items-center space-x-4">
                             @auth
-                                <a href="{{ route('profile') }}" class="text-gray-700 hover:text-gray-900">
-                                    {{ auth()->user()->name }}
-                                </a>
+                                <a href="{{ route('profile.index') }}" class="text-gray-300 hover:text-white">{{ auth()->user()->name }}</a>
                                 <span class="text-gray-400">|</span>
-                                <a href="{{ route('cart.index') }}" class="text-gray-700 hover:text-gray-900">
-                                    Mi Carrito
-                                    @php
-                                        $cartCount = auth()->user()->cartItems()->count();
-                                    @endphp
-                                    @if($cartCount > 0)
-                                        <span class="text-blue-500">({{ $cartCount }})</span>
-                                    @endif
+                                <a href="{{ route('cart.index') }}" class="text-gray-300 hover:text-white">
+                                    Mi Carrito ({{ auth()->user()->cartItems()->count() }})
                                 </a>
                                 <form method="POST" action="{{ route('logout') }}" class="inline">
                                     @csrf
-                                    <button type="submit" class="text-gray-700 hover:text-gray-900">
-                                        Cerrar Sesión
-                                    </button>
+                                    <button type="submit" class="text-gray-300 hover:text-white">Cerrar Sesión</button>
                                 </form>
                             @else
                                 <a href="{{ route('login') }}" class="text-gray-700 hover:text-gray-900">Iniciar Sesión</a>
