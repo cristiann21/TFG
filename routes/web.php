@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TeacherRequestController;
+use App\Http\Controllers\CartController;
 
 // ==================================================
 // ** RUTAS DE RESTABLECIMIENTO **
@@ -81,4 +82,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/teacher-request', [TeacherRequestController::class, 'store'])->name('teacher-request.store');
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Rutas del carrito
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{course}', [CartController::class, 'add'])->name('cart.add');
+    Route::delete('/cart/remove/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 });

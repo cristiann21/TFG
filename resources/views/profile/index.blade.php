@@ -2,18 +2,20 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-7xl mx-auto">
         <div class="postit-note blue-note p-6">
             <div class="flex items-center justify-between mb-6">
-                <h1 class="text-2xl font-bold">
-                    <i class="fas fa-user mr-2"></i>
-                    Mi Perfil
-                </h1>
-                <div class="flex gap-4">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold">
+                        <i class="fas fa-user mr-2"></i>
+                        {{ auth()->user()->name }}
+                    </h1>
                     <a href="{{ route('profile.edit') }}" class="btn btn-secondary">
                         <i class="fas fa-edit mr-2"></i>
                         Editar Perfil
                     </a>
+                </div>
+                <div class="flex items-center space-x-4">
                     @if(!auth()->user()->isTeacher())
                         <a href="{{ route('teacher-request.show') }}" class="btn btn-primary">
                             <i class="fas fa-chalkboard-teacher mr-2"></i>

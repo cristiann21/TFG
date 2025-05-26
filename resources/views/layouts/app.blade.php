@@ -36,30 +36,32 @@
                     </nav>
 
                     <div class="auth-buttons">
-                        @guest
-                            <a href="{{ route('login') }}" class="btn btn-outline">Iniciar Sesión</a>
-                            <a href="{{ route('register') }}" class="btn btn-primary">Registrarse</a>
-                        @else
-                            <div class="user-profile">
-                                <div class="profile-dropdown">
-                                    <div class="dropdown-menu">
-                                        <a href="{{ route('profile') }}" class="dropdown-item">
-                                            
-                                            Mi Perfil
-                                        </a>
-                                        
-                                        <div class="dropdown-divider"></div>
-                                        <form method="POST" action="{{ route('logout') }}">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item text-danger">
-                                                <i class="fas fa-sign-out-alt"></i>
-                                                Cerrar Sesión
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        @endguest
+                        <div class="flex items-center space-x-4">
+                            @auth
+                                <a href="{{ route('profile') }}" class="text-gray-700 hover:text-gray-900">
+                                    {{ auth()->user()->name }}
+                                </a>
+                                <span class="text-gray-400">|</span>
+                                <a href="{{ route('cart.index') }}" class="text-gray-700 hover:text-gray-900">
+                                    Mi Carrito
+                                    @php
+                                        $cartCount = auth()->user()->cartItems()->count();
+                                    @endphp
+                                    @if($cartCount > 0)
+                                        <span class="text-blue-500">({{ $cartCount }})</span>
+                                    @endif
+                                </a>
+                                <form method="POST" action="{{ route('logout') }}" class="inline">
+                                    @csrf
+                                    <button type="submit" class="text-gray-700 hover:text-gray-900">
+                                        Cerrar Sesión
+                                    </button>
+                                </form>
+                            @else
+                                <a href="{{ route('login') }}" class="text-gray-700 hover:text-gray-900">Iniciar Sesión</a>
+                                <a href="{{ route('register') }}" class="text-gray-700 hover:text-gray-900">Registrarse</a>
+                            @endauth
+                        </div>
                     </div>
 
                     <button class="mobile-menu-toggle">
