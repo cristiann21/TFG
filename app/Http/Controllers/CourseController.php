@@ -96,6 +96,12 @@ class CourseController extends Controller
     public function obtain(Course $course)
     {
         $user = auth()->user();
+        
+        // Verificar si el usuario ya tiene el curso
+        if ($user->courses()->where('course_id', $course->id)->exists()) {
+            return redirect()->back()->with('error', 'Ya tienes este curso en tu cuenta.');
+        }
+
         if ($user->getRemainingCourses() <= 0) {
             return redirect()->back()->with('error', 'No tienes cursos disponibles para obtener.');
         }
@@ -108,9 +114,118 @@ class CourseController extends Controller
 
     public function addToFavorites(Course $course)
     {
-        $user = auth()->user();
-        $user->favorites()->attach($course->id);
+        auth()->user()->favorites()->attach($course->id);
+        return back()->with('success', 'Curso añadido a favoritos');
+    }
 
-        return redirect()->back()->with('success', 'Curso añadido a favoritos.');
+    public function removeFromFavorites(Course $course)
+    {
+        auth()->user()->favorites()->detach($course->id);
+        return back()->with('success', 'Curso eliminado de favoritos');
+    }
+
+    public function create()
+    {
+        if (!auth()->check() || auth()->user()->role !== 'teacher') {
+            abort(403, 'No tienes permiso para acceder a esta página.');
+        }
+
+        $categories = Category::all();
+        return view('courses.create', compact('categories'));
+    }
+
+    public function store(Request $request)
+    {
+        if (!auth()->check() || auth()->user()->role !== 'teacher') {
+            abort(403, 'No tienes permiso para acceder a esta página.');
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'level' => 'required|in:Principiante,Intermedio,Avanzado',
+            'language' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        $data = $request->all();
+        $data['created_by'] = auth()->id();
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/courses'), $imageName);
+            $data['image'] = 'images/courses/' . $imageName;
+        }
+
+        Course::create($data);
+
+        return redirect()->route('courses.index')
+            ->with('success', 'Curso creado exitosamente.');
+    }
+
+    public function edit(Course $course)
+    {
+        if (!auth()->check() || auth()->user()->role !== 'teacher' || $course->created_by !== auth()->id()) {
+            abort(403, 'No tienes permiso para editar este curso.');
+        }
+
+        $categories = Category::all();
+        return view('courses.edit', compact('course', 'categories'));
+    }
+
+    public function update(Request $request, Course $course)
+    {
+        if (!auth()->check() || auth()->user()->role !== 'teacher' || $course->created_by !== auth()->id()) {
+            abort(403, 'No tienes permiso para editar este curso.');
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'level' => 'required|in:Principiante,Intermedio,Avanzado',
+            'language' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        $data = $request->all();
+
+        if ($request->hasFile('image')) {
+            // Eliminar la imagen anterior si existe
+            if ($course->image && file_exists(public_path($course->image))) {
+                unlink(public_path($course->image));
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('images/courses'), $imageName);
+            $data['image'] = 'images/courses/' . $imageName;
+        }
+
+        $course->update($data);
+
+        return redirect()->route('profile.courses')
+            ->with('success', 'Curso actualizado exitosamente.');
+    }
+
+    public function destroy(Course $course)
+    {
+        if (!auth()->check() || auth()->user()->role !== 'teacher' || $course->created_by !== auth()->id()) {
+            abort(403, 'No tienes permiso para eliminar este curso.');
+        }
+
+        // Eliminar la imagen si existe
+        if ($course->image && file_exists(public_path($course->image))) {
+            unlink(public_path($course->image));
+        }
+
+        $course->delete();
+
+        return redirect()->route('profile.courses')
+            ->with('success', 'Curso eliminado exitosamente.');
     }
 }

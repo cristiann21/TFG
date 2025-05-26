@@ -48,7 +48,7 @@
                                         <path d="M12 20h9"></path>
                                         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                                     </svg>
-                                    <span>Creado por <strong>{{ $course->teacher->name }}</strong></span>
+                                    <span>Creado por <strong>{{ optional($course->instructor)->name ?? 'Profesor' }}</strong></span>
                                 </div>
                                 <div class="meta-item">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="meta-icon">
@@ -325,10 +325,10 @@
                                 <div class="instructor-info">
                                     <div class="instructor-header">
                                         <div class="instructor-avatar">
-                                            <img src="{{ asset('images/teacher-avatar.png') }}" alt="{{ $course->teacher->name }}">
+                                            <img src="{{ asset('images/teacher-avatar.png') }}" alt="{{ optional($course->instructor)->name ?? 'Profesor' }}">
                                         </div>
                                         <div class="instructor-details">
-                                            <h3>{{ $course->teacher->name }}</h3>
+                                            <h3>{{ optional($course->instructor)->name ?? 'Profesor' }}</h3>
                                             <p>Experto en {{ $course->language ?? 'Desarrollo' }}</p>
                                         </div>
                                     </div>
@@ -367,17 +367,33 @@
                                         <p class="text-danger">No tienes cursos disponibles para obtener.</p>
                                     @endif
                                     @if(!auth()->user()->courses()->where('course_id', $course->id)->exists())
-                                        <form action="{{ route('cart.add', $course) }}" method="POST" class="inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-primary btn-block">
+                                        @if(session('success') && session('success') === 'Curso añadido al carrito')
+                                            <div class="mb-2 text-green-600 text-sm">
+                                                {{ session('success') }}
+                                            </div>
+                                        @endif
+                                        @if(auth()->user()->cartItems()->where('course_id', $course->id)->exists())
+                                            <button disabled class="btn btn-secondary btn-block cursor-not-allowed">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
                                                     <circle cx="9" cy="21" r="1"></circle>
                                                     <circle cx="20" cy="21" r="1"></circle>
                                                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                                                 </svg>
-                                                Añadir al Carrito
+                                                Ya está en el carrito
                                             </button>
-                                        </form>
+                                        @else
+                                            <form action="{{ route('cart.add', $course) }}" method="POST" class="inline">
+                                                @csrf
+                                                <button type="submit" class="btn btn-primary btn-block">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                        <circle cx="9" cy="21" r="1"></circle>
+                                                        <circle cx="20" cy="21" r="1"></circle>
+                                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                                    </svg>
+                                                    Añadir al Carrito
+                                                </button>
+                                            </form>
+                                        @endif
                                     @else
                                         <button disabled class="btn btn-secondary btn-block cursor-not-allowed">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
@@ -397,17 +413,34 @@
                                         Inicia sesión para comprar
                                     </a>
                                 @endauth
-                                <button class="btn btn-outline btn-block">
-                                    <form action="{{ route('courses.addToFavorites', $course->id) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-outline btn-block">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                            </svg>
-                                            Añadir a Favoritos
-                                        </button>
-                                    </form>
-                                </button>
+                                @auth
+                                    @if(auth()->user()->favorites()->where('course_id', $course->id)->exists())
+                                        <form action="{{ route('courses.removeFromFavorites', $course->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-outline btn-block">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                </svg>
+                                                Quitar de Favoritos
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('courses.addToFavorites', $course->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-outline btn-block">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                </svg>
+                                                Añadir a Favoritos
+                                            </button>
+                                        </form>
+                                    @endif
+                                    @if(session('success') && (session('success') === 'Curso añadido a favoritos' || session('success') === 'Curso eliminado de favoritos'))
+                                        <div class="mt-2 text-green-600 text-sm">
+                                            {{ session('success') }}
+                                        </div>
+                                    @endif
+                                @endauth
                             </div>
                             
                             <div class="course-includes">

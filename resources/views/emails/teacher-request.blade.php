@@ -11,8 +11,8 @@ Se ha recibido una nueva solicitud para ser profesor en PinCode.
 **Experiencia:**
 {{ $teacherRequest->experience }}
 
-@component('mail::button', ['url' => config('app.url') . '/admin/teacher-requests'])
-Ver Solicitud
+@component('mail::button', ['url' => route('teacher-request.approve', $teacherRequest)])
+Aprobar Solicitud
 @endcomponent
 
 Saludos,<br>

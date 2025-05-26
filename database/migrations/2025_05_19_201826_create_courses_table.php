@@ -15,7 +15,7 @@ return new class extends Migration
             $table->decimal('price', 8, 2);
             $table->string('level');
             $table->string('image')->nullable();
-            $table->foreignId('created_by')->constrained('teachers');
+            $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use App\Models\Course;
 
 class ProfileController extends Controller
 {
@@ -34,9 +35,14 @@ class ProfileController extends Controller
 
     public function courses()
     {
-        $user = auth()->user();
-        return view('profile.courses', [
-            'courses' => $user->courses
-        ]);
+        if (auth()->user()->role !== 'teacher') {
+            abort(403, 'No tienes permiso para acceder a esta página.');
+        }
+
+        $courses = Course::where('created_by', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('profile.courses', compact('courses'));
     }
 } 

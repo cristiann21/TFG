@@ -57,20 +57,32 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/profile/courses', [ProfileController::class, 'courses'])->name('profile.courses');
     
+    Route::middleware('teacher')->group(function () {
+        Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
+        Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+        Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+        Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
+        Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
+    });
+
     Route::controller(CourseController::class)->group(function () {
         Route::get('/courses', 'index')->name('courses.index');
         Route::get('/courses/{course}', 'show')->name('courses.show');
+        Route::post('/courses/{course}/obtain', 'obtain')->name('courses.obtain');
+        Route::post('/courses/{course}/addToFavorites', 'addToFavorites')->name('courses.addToFavorites');
+        Route::post('/courses/{course}/removeFromFavorites', 'removeFromFavorites')->name('courses.removeFromFavorites');
         Route::get('/courses/create', 'create')->name('courses.create');
         Route::post('/courses', 'store')->name('courses.store');
         Route::get('/courses/{course}/edit', 'edit')->name('courses.edit');
         Route::put('/courses/{course}', 'update')->name('courses.update');
         Route::delete('/courses/{course}', 'destroy')->name('courses.destroy');
-        Route::post('/courses/{course}/obtain', 'obtain')->name('courses.obtain');
-        Route::post('/courses/{course}/addToFavorites', 'addToFavorites')->name('courses.addToFavorites');
     });
     
     Route::controller(ProfileController::class)->group(function () {
-        Route::get('/my-courses', 'courses')->name('my-courses');
+        Route::get('/profile', 'index')->name('profile.index');
+        Route::get('/profile/edit', 'edit')->name('profile.edit');
+        Route::put('/profile', 'update')->name('profile.update');
+        Route::get('/profile/courses', 'courses')->name('profile.courses');
     });
     
     Route::controller(PurchaseController::class)->group(function () {
@@ -86,6 +98,7 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/teacher-request', [TeacherRequestController::class, 'show'])->name('teacher-request.show');
     Route::post('/teacher-request', [TeacherRequestController::class, 'store'])->name('teacher-request.store');
+    Route::get('/teacher-request/{teacherRequest}/approve', [TeacherRequestController::class, 'approve'])->name('teacher-request.approve');
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -94,4 +107,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add/{course}', [CartController::class, 'add'])->name('cart.add');
     Route::delete('/cart/remove/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 });

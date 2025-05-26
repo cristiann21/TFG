@@ -119,7 +119,7 @@
                                     <p>{{ Str::limit($course->description, 100) }}</p>
                                     <div class="course-meta">
                                         <span class="course-price">{{ number_format($course->price, 2) }} €</span>
-                                        <span class="course-category">{{ $course->category->name ?? 'Sin categoría' }}</span>
+                                        <span class="course-category">{{ optional($course->category)->name ?? 'Sin categoría' }}</span>
                                     </div>
                                     <div class="course-footer">
                                         <a href="{{ route('courses.show', $course) }}" class="btn btn-sm {{ ['btn-yellow', 'btn-blue', 'btn-green', 'btn-pink', 'btn-purple'][($loop->index % 5)] }}">Ver Curso</a>

@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Category;
 use App\Models\Course;
-use App\Models\Teacher;
+use App\Models\User;
 
 class CourseSeeder extends Seeder
 {
@@ -28,11 +28,12 @@ class CourseSeeder extends Seeder
         }
 
         // Crear un profesor de ejemplo si no existe
-        $teacher = Teacher::firstOrCreate(
+        $teacher = User::firstOrCreate(
             ['email' => 'profesor@example.com'],
             [
                 'name' => 'Profesor Ejemplo',
                 'password' => bcrypt('password'),
+                'role' => 'teacher'
             ]
         );
 

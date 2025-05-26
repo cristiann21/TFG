@@ -30,6 +30,9 @@
                         <ul>
                             <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Inicio</a></li>
                             <li><a href="{{ route('courses.index') }}" class="{{ request()->routeIs('courses.*') ? 'active' : '' }}">Cursos</a></li>
+                            @if(auth()->check() && auth()->user()->role === 'teacher')
+                                <li><a href="{{ route('courses.create') }}" class="{{ request()->routeIs('courses.create') ? 'active' : '' }}">Añadir Curso</a></li>
+                            @endif
                             <li><a href="{{ route('subscriptions.index') }}" class="{{ request()->routeIs('subscriptions.*') ? 'active' : '' }}">
                                 @if(auth()->check() && auth()->user()->hasActiveSubscription())
                                     <span class="text-green-400">Suscripción Activa</span>

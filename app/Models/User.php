@@ -35,6 +35,11 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function createdCourses()
+    {
+        return $this->hasMany(Course::class, 'created_by');
+    }
+
     public function purchases()
     {
         return $this->hasMany(Purchase::class);
@@ -83,6 +88,7 @@ class User extends Authenticatable
 
     public function favorites()
     {
-        return $this->belongsToMany(Course::class, 'favorites')->withTimestamps();
+        return $this->belongsToMany(Course::class, 'favorites')
+            ->withTimestamps();
     }
 }

@@ -21,48 +21,56 @@
                 </div>
             @endif
 
-            @if($request && $request->status === 'pending')
-                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-clock text-yellow-400"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-yellow-700">
-                                Tu solicitud está siendo revisada. Te notificaremos cuando tengamos una respuesta.
-                            </p>
+            @if(session('info'))
+                <div class="alert alert-info mb-6">
+                    {{ session('info') }}
+                </div>
+            @endif
+
+            @if($request)
+                @if($request->status === 'pending')
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-clock text-yellow-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-yellow-700">
+                                    Tu solicitud ha sido enviada.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @elseif($request && $request->status === 'approved')
-                <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-check-circle text-green-400"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-green-700">
-                                ¡Felicidades! Tu solicitud ha sido aprobada. Ya puedes crear y gestionar cursos.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            @elseif($request && $request->status === 'rejected')
-                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-times-circle text-red-400"></i>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-red-700">
-                                Lo sentimos, tu solicitud ha sido rechazada. 
-                                @if($request->admin_notes)
-                                    <br>Razón: {{ $request->admin_notes }}
-                                @endif
-                            </p>
+                @elseif($request->status === 'approved')
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-check-circle text-green-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-green-700">
+                                    ¡Felicidades! Tu solicitud ha sido aprobada. Ya puedes crear y gestionar cursos.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @elseif($request->status === 'rejected')
+                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-times-circle text-red-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-red-700">
+                                    Lo sentimos, tu solicitud ha sido rechazada. 
+                                    @if($request->admin_notes)
+                                        <br>Razón: {{ $request->admin_notes }}
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             @else
                 <form action="{{ route('teacher-request.store') }}" method="POST" class="space-y-6">
                     @csrf
@@ -83,7 +91,7 @@
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                         <p class="mt-1 text-sm text-gray-500">
-                            Mínimo 100 caracteres. Sé específico sobre tus motivaciones y objetivos.
+                            Sé específico sobre tus motivaciones y objetivos.
                         </p>
                     </div>
 
@@ -103,7 +111,7 @@
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                         <p class="mt-1 text-sm text-gray-500">
-                            Mínimo 100 caracteres. Incluye tu experiencia, certificaciones y áreas de expertise.
+                            Incluye tu experiencia, certificaciones y áreas de expertise.
                         </p>
                     </div>
 

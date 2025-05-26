@@ -64,4 +64,10 @@ class CartController extends Controller
 
         return redirect()->route('profile')->with('success', '¡Compra realizada con éxito!');
     }
+
+    public function clear()
+    {
+        auth()->user()->cartItems()->delete();
+        return back()->with('success', 'Carrito vaciado correctamente');
+    }
 } 

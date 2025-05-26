@@ -24,11 +24,24 @@
                 </a>
             @else
                 <div class="space-y-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">Mi Carrito</h2>
+                        <form action="{{ route('cart.clear') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-danger">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                Vaciar Carrito
+                            </button>
+                        </form>
+                    </div>
                     @foreach($cartItems as $item)
                         <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
                             <div>
                                 <h3 class="font-medium">{{ $item->course->title }}</h3>
-                                <p class="text-sm text-gray-600">{{ $item->course->teacher->name }}</p>
+                                <p class="text-sm text-gray-600">{{ optional($item->course->instructor)->name ?? 'Profesor' }}</p>
                                 <p class="text-sm font-medium">${{ number_format($item->price, 2) }}</p>
                             </div>
                             <form action="{{ route('cart.remove', $item) }}" method="POST">

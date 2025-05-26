@@ -12,8 +12,8 @@ class TeacherRequestController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'motivation' => 'required|string|min:100',
-            'experience' => 'required|string|min:100',
+            'motivation' => 'required|string',
+            'experience' => 'required|string',
         ]);
 
         // Verificar si ya existe una solicitud pendiente
@@ -41,10 +41,51 @@ class TeacherRequestController extends Controller
 
     public function show()
     {
+        // Verificar si el usuario ya es profesor
+        if (auth()->user()->isTeacher()) {
+            return redirect()->route('profile.index')->with('info', 'Ya tienes el rol de profesor.');
+        }
+
         $request = TeacherRequest::where('user_id', auth()->id())
             ->latest()
             ->first();
 
+        // Si no hay solicitud, inicializar como null
+        if (!$request) {
+            $request = null;
+        }
+
         return view('profile.teacher-request', compact('request'));
+    }
+
+    public function approve(TeacherRequest $teacherRequest)
+    {
+        // Verificar que el usuario está autenticado
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        // Verificar que la solicitud pertenece al usuario autenticado
+        if ($teacherRequest->user_id !== auth()->id()) {
+            return redirect()->route('home')->with('error', 'No tienes permiso para acceder a esta solicitud.');
+        }
+
+        // Verificar si el usuario ya es profesor
+        if (auth()->user()->isTeacher()) {
+            return redirect()->route('profile.index')->with('info', 'Ya tienes el rol de profesor.');
+        }
+
+        // Actualizar el estado de la solicitud
+        $teacherRequest->update([
+            'status' => 'approved'
+        ]);
+
+        // Convertir al usuario en profesor
+        $user = auth()->user();
+        $user->update([
+            'role' => 'teacher'
+        ]);
+
+        return redirect()->route('profile.index')->with('success', '¡Felicidades! Ahora eres profesor en PinCode.');
     }
 }

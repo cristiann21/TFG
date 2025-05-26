@@ -23,20 +23,15 @@ class Course extends Model
         'instructor_id'
     ];
 
-    public function teacher()
+    public function instructor()
     {
-        return $this->belongsTo(Teacher::class, 'created_by');
+        return $this->belongsTo(User::class, 'instructor_id');
     }
 
     public function users()
     {
         return $this->belongsToMany(User::class, 'course_user')
             ->withTimestamps();
-    }
-
-    public function instructor()
-    {
-        return $this->belongsTo(User::class, 'instructor_id');
     }
 
     public function category()
