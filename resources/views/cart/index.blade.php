@@ -12,6 +12,12 @@
                 </div>
             @endif
 
+            @if(session('error'))
+                <div class="alert alert-danger mb-6">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             @php
                 $cartItems = auth()->user()->cartItems()->with('course')->get();
                 $total = $cartItems->sum('price');
@@ -37,12 +43,13 @@
                             </button>
                         </form>
                     </div>
+
                     @foreach($cartItems as $item)
                         <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
                             <div>
                                 <h3 class="font-medium">{{ $item->course->title }}</h3>
                                 <p class="text-sm text-gray-600">{{ optional($item->course->instructor)->name ?? 'Profesor' }}</p>
-                                <p class="text-sm font-medium">${{ number_format($item->price, 2) }}</p>
+                                <p class="text-sm font-medium">{{ number_format($item->price, 2) }} €</p>
                             </div>
                             <form action="{{ route('cart.remove', $item) }}" method="POST">
                                 @csrf
@@ -55,16 +62,32 @@
                     @endforeach
 
                     <div class="border-t pt-4 mt-4">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Total:</span>
-                            <span class="font-bold text-lg">${{ number_format($total, 2) }}</span>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-medium">Subtotal:</span>
+                            <span class="font-bold">{{ number_format($total, 2) }} €</span>
                         </div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-medium">IVA (21%):</span>
+                            <span class="font-bold">{{ number_format($total * 0.21, 2) }} €</span>
+                        </div>
+                        <div class="flex justify-between items-center border-t pt-2">
+                            <span class="font-medium text-lg">Total:</span>
+                            <span class="font-bold text-lg">{{ number_format($total * 1.21, 2) }} €</span>
+                        </div>
+
                         <form action="{{ route('cart.checkout') }}" method="POST" class="mt-4">
                             @csrf
-                            <button type="submit" class="w-full bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600">
-                                Proceder al Pago
+                            <button type="submit" class="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                </svg>
+                                Pagar con Stripe
                             </button>
                         </form>
+
+                        <p class="text-sm text-gray-500 mt-2 text-center">
+                            El pago se procesará de forma segura a través de Stripe
+                        </p>
                     </div>
                 </div>
             @endif

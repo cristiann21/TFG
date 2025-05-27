@@ -130,10 +130,14 @@
                         @endforeach
                     </div>
 
-                    <!-- Paginación -->
-                    <div class="pagination-container">
-                        {{ $courses->links() }}
-                    </div>
+                    <!-- Botón Cargar Más -->
+                    @if($courses->hasMorePages())
+                        <div class="load-more-container">
+                            <button id="load-more" class="btn btn-blue" data-page="1">
+                                Cargar más cursos
+                            </button>
+                        </div>
+                    @endif
                 @endif
             </div>
         </div>
@@ -143,270 +147,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<style>
-.courses-page {
-    min-height: 100vh;
-    padding: 2rem 0;
-}
-
-.courses-hero {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.courses-hero h1 {
-    font-family: var(--font-handwritten);
-    font-size: 2.5rem;
-    color: var(--color-primary);
-    margin-bottom: 1rem;
-}
-
-.courses-hero p {
-    font-size: 1.2rem;
-    color: var(--color-text-light);
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.courses-container {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.filters-container {
-    position: sticky;
-    top: 2rem;
-    height: fit-content;
-}
-
-.filter-card {
-    padding: 1.5rem;
-}
-
-.filters-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.filter-group label {
-    font-family: var(--font-handwritten);
-    color: var(--color-text);
-    font-size: 1.1rem;
-}
-
-.search-group {
-    grid-column: 1 / -1;
-}
-
-.search-input {
-    position: relative;
-}
-
-.search-input input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    padding-right: 3rem;
-    border: 2px solid var(--color-border);
-    border-radius: var(--border-radius);
-    font-family: var(--font-handwritten);
-}
-
-.search-btn {
-    position: absolute;
-    right: 0.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--color-primary);
-    cursor: pointer;
-    padding: 0.5rem;
-}
-
-.filter-select {
-    padding: 0.75rem 1rem;
-    border: 2px solid var(--color-border);
-    border-radius: var(--border-radius);
-    font-family: var(--font-handwritten);
-    background-color: white;
-    cursor: pointer;
-}
-
-.filter-select:focus {
-    outline: none;
-    border-color: var(--color-primary);
-}
-
-.filter-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.courses-list {
-    min-height: 500px;
-}
-
-.courses-list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.results-count p {
-    color: var(--color-text-light);
-    font-size: 1.1rem;
-}
-
-.courses-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.course-card {
-    position: relative;
-    transition: transform 0.3s ease;
-}
-
-.course-card:hover {
-    transform: translateY(-5px);
-}
-
-.course-image {
-    position: relative;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    overflow: hidden;
-}
-
-.course-image img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.course-language,
-.course-level {
-    position: absolute;
-    top: 1rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--border-radius);
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.course-language {
-    left: 1rem;
-    background: var(--color-primary);
-    color: white;
-}
-
-.course-level {
-    right: 1rem;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--color-text);
-}
-
-.course-content {
-    padding: 1.5rem;
-}
-
-.course-content h3 {
-    font-family: var(--font-handwritten);
-    font-size: 1.5rem;
-    color: var(--color-text);
-    margin-bottom: 1rem;
-}
-
-.course-content p {
-    color: var(--color-text-light);
-    margin-bottom: 1rem;
-    line-height: 1.5;
-}
-
-.course-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.course-price {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--color-primary);
-}
-
-.course-category {
-    font-size: 0.9rem;
-    color: var(--color-text-light);
-}
-
-.course-footer {
-    text-align: right;
-}
-
-.pagination-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-}
-
-@media (max-width: 1024px) {
-    .courses-container {
-        grid-template-columns: 1fr;
-    }
-
-    .filters-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        padding: 1rem;
-        display: none;
-    }
-
-    .filters-container.active {
-        display: block;
-    }
-
-    .filter-card {
-        max-width: 500px;
-        margin: 2rem auto;
-        max-height: calc(100vh - 4rem);
-        overflow-y: auto;
-    }
-}
-
-@media (max-width: 768px) {
-    .courses-page {
-        padding: 1rem 0;
-    }
-
-    .courses-hero h1 {
-        font-size: 2rem;
-    }
-
-    .courses-grid {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
+<link rel="stylesheet" href="{{ asset('css/views/courses.css') }}">
 @endpush
 
 @push('scripts')
@@ -440,6 +181,50 @@ document.addEventListener('DOMContentLoaded', function() {
             filterForm.submit();
         });
     });
+
+    // Cargar más cursos
+    const loadMoreBtn = document.getElementById('load-more');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
+            const currentPage = parseInt(this.dataset.page);
+            const nextPage = currentPage + 1;
+            
+            // Obtener los parámetros de la URL actual
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('page', nextPage);
+            
+            // Mostrar indicador de carga
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+            this.disabled = true;
+            
+            // Realizar la petición AJAX
+            fetch(`${window.location.pathname}?${urlParams.toString()}`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newCourses = doc.querySelector('.courses-grid').innerHTML;
+                    
+                    // Añadir los nuevos cursos
+                    document.querySelector('.courses-grid').insertAdjacentHTML('beforeend', newCourses);
+                    
+                    // Actualizar el botón
+                    this.dataset.page = nextPage;
+                    this.innerHTML = 'Cargar más cursos';
+                    this.disabled = false;
+                    
+                    // Ocultar el botón si no hay más páginas
+                    if (!doc.querySelector('#load-more')) {
+                        this.parentElement.remove();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    this.innerHTML = 'Error al cargar más cursos';
+                    this.disabled = false;
+                });
+        });
+    }
 });
 </script>
 @endpush

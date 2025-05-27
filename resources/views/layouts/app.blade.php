@@ -121,17 +121,8 @@
                         <div class="footer-column">
                             <h3>Legal</h3>
                             <ul>
-                                <li><a href="#">Términos y Condiciones</a></li>
-                                <li><a href="#">Política de Privacidad</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="footer-column">
-                            <h3>Redes Sociales</h3>
-                            <ul>
-                                <li><a href="#">Facebook</a></li>
-                                <li><a href="#">Twitter</a></li>
-                                <li><a href="#">Instagram</a></li>
+                                <li><a href="{{ route('terms') }}">Términos y Condiciones</a></li>
+                                <li><a href="{{ route('privacy') }}">Política de Privacidad</a></li>
                             </ul>
                         </div>
                     </div>

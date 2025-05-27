@@ -1,0 +1,121 @@
+/* Estilos específicos de la vista de cursos */
+.courses-page {
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.courses-hero {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.courses-hero h1 {
+    font-family: var(--font-handwritten);
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+
+.courses-hero p {
+    font-size: 1.2rem;
+    color: var(--color-text-light);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.courses-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.filters-container {
+    position: sticky;
+    top: 7rem;
+    height: fit-content;
+}
+
+.courses-list {
+    min-height: 500px;
+}
+
+.courses-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.results-count p {
+    color: var(--color-text-light);
+    font-size: 1.1rem;
+}
+
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+}
+
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+    padding: 1rem 0;
+    position: relative;
+    z-index: 1;
+}
+
+.load-more-container .btn {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    position: relative;
+    z-index: 2;
+}
+
+@media (max-width: 1024px) {
+    .courses-container {
+        grid-template-columns: 1fr;
+    }
+
+    .filters-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        padding: 1rem;
+        display: none;
+    }
+
+    .filters-container.active {
+        display: block;
+    }
+
+    .filter-card {
+        max-width: 500px;
+        margin: 2rem auto;
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .courses-page {
+        padding: 1rem 0;
+    }
+
+    .courses-hero h1 {
+        font-size: 2rem;
+    }
+
+    .courses-grid {
+        grid-template-columns: 1fr;
+    }
+} 

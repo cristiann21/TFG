@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\CartItem;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Laravel\Cashier\Exceptions\IncompletePayment;
+use Stripe\Exception\CardException;
+use Stripe\Exception\InvalidRequestException;
 
 class CartController extends Controller
 {
@@ -53,16 +56,44 @@ class CartController extends Controller
             return back()->with('error', 'Tu carrito está vacío');
         }
 
-        // Aquí iría la lógica de pago
-        // Por ahora solo añadimos los cursos al usuario
-        foreach ($cartItems as $item) {
-            auth()->user()->courses()->attach($item->course_id);
+        $total = $cartItems->sum('price');
+
+        try {
+            // Crear el pago en Stripe
+            $payment = auth()->user()->charge($total * 100, [
+                'description' => 'Compra de cursos en PinCode',
+                'metadata' => [
+                    'courses' => $cartItems->pluck('course.title')->join(', '),
+                    'user_id' => auth()->id(),
+                    'user_email' => auth()->user()->email
+                ],
+                'receipt_email' => auth()->user()->email,
+                'currency' => 'eur'
+            ]);
+
+            // Si el pago es exitoso, añadir los cursos al usuario
+            foreach ($cartItems as $item) {
+                auth()->user()->courses()->attach($item->course_id);
+            }
+
+            // Limpiar el carrito
+            auth()->user()->cartItems()->delete();
+
+            return redirect()->route('profile.courses')
+                ->with('success', '¡Compra realizada con éxito! Ya puedes acceder a tus cursos.');
+
+        } catch (IncompletePayment $exception) {
+            return redirect()->route('cashier.payment', [
+                $exception->payment->id, 
+                'redirect' => route('profile.courses')
+            ]);
+        } catch (CardException $e) {
+            return back()->with('error', 'Error con la tarjeta: ' . $e->getMessage());
+        } catch (InvalidRequestException $e) {
+            return back()->with('error', 'Error en la solicitud de pago: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            return back()->with('error', 'Hubo un error al procesar el pago. Por favor, inténtalo de nuevo.');
         }
-
-        // Limpiar el carrito
-        auth()->user()->cartItems()->delete();
-
-        return redirect()->route('profile')->with('success', '¡Compra realizada con éxito!');
     }
 
     public function clear()

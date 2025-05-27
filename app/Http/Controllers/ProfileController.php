@@ -35,14 +35,20 @@ class ProfileController extends Controller
 
     public function courses()
     {
-        if (auth()->user()->role !== 'teacher') {
-            abort(403, 'No tienes permiso para acceder a esta página.');
+        $user = auth()->user();
+        
+        if ($user->isTeacher()) {
+            // Si es profesor, mostrar cursos creados
+            $courses = Course::where('created_by', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+            return view('profile.courses', compact('courses'));
+        } else {
+            // Si es estudiante, mostrar cursos adquiridos
+            $courses = $user->courses()
+                ->orderBy('created_at', 'desc')
+                ->get();
+            return view('profile.enrolled-courses', compact('courses'));
         }
-
-        $courses = Course::where('created_by', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('profile.courses', compact('courses'));
     }
 } 

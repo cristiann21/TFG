@@ -58,78 +58,8 @@
         </div>
     </div>
 </div>
+@endsection
 
 @push('styles')
-<style>
-.terms-page {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.terms-page h1 {
-    color: var(--color-text);
-    text-align: center;
-    margin-bottom: 0.5rem;
-    font-size: 2rem;
-}
-
-.last-updated {
-    text-align: center;
-    color: var(--color-text-light);
-    font-size: 0.9rem;
-    margin-bottom: 2rem;
-}
-
-.terms-content {
-    color: var(--color-text);
-}
-
-.terms-section {
-    margin-bottom: 2rem;
-}
-
-.terms-section h2 {
-    color: var(--color-text);
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--color-border);
-}
-
-.terms-section p {
-    line-height: 1.6;
-    margin-bottom: 1rem;
-}
-
-.terms-section ul {
-    list-style-type: disc;
-    margin-left: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.terms-section li {
-    line-height: 1.6;
-    margin-bottom: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    .terms-page {
-        margin: 1rem;
-        padding: 1.5rem;
-    }
-
-    .terms-page h1 {
-        font-size: 1.75rem;
-    }
-
-    .terms-section h2 {
-        font-size: 1.1rem;
-    }
-}
-</style>
-@endpush
-@endsection 
+<link rel="stylesheet" href="{{ asset('css/views/terms.css') }}">
+@endpush 

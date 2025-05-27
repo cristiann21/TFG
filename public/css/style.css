@@ -208,11 +208,6 @@ img {
     transform: rotate(-1deg);
 }
 
-.orange-note {
-    background: var(--color-orange-bg);
-    transform: rotate(0deg);
-}
-
 .note-corner {
     position: absolute;
     bottom: -5px;
@@ -222,6 +217,24 @@ img {
     background-color: rgba(0, 0, 0, 0.05);
     transform: rotate(5deg);
     clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+/* Estilos específicos para el contenido dentro de los postits */
+.postit-note h1,
+.postit-note h2,
+.postit-note h3 {
+    font-family: var(--font-handwritten);
+    color: var(--color-text);
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.postit-note p {
+    color: var(--color-text-light);
+    line-height: 1.6;
+    position: relative;
+    z-index: 2;
 }
 
 /* Estilos de Filtros de Cursos */
@@ -2209,7 +2222,6 @@ img {
     border-radius: var(--border-radius);
     padding: 1.5rem;
     box-shadow: var(--shadow);
-    position: sticky;
     top: 100px;
 }
 
