@@ -11,10 +11,10 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">{{ $question->question }}</h5>
-                    @foreach(json_decode($question->options) as $index => $option)
+                    @foreach(json_decode($question->options, true) as $key => $option)
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="answers[{{ $question->id }}]" value="{{ $index }}" id="question{{ $question->id }}_option{{ $index }}">
-                            <label class="form-check-label" for="question{{ $question->id }}_option{{ $index }}">
+                            <input class="form-check-input" type="radio" name="answers[{{ $question->id }}]" value="{{ $key }}" id="question{{ $question->id }}_option{{ $key }}" required>
+                            <label class="form-check-label" for="question{{ $question->id }}_option{{ $key }}">
                                 {{ $option }}
                             </label>
                         </div>

@@ -7,6 +7,18 @@
             <h2>Iniciar Sesión</h2>
             <p>¡Bienvenido de nuevo! Ingresa tus credenciales para continuar.</p>
             
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if ($errors->has('csrf'))
+                <div class="alert alert-danger">
+                    La sesión ha expirado. Por favor, intenta iniciar sesión nuevamente.
+                </div>
+            @endif
+            
             <form method="POST" action="{{ route('login') }}" class="auth-form">
                 @csrf
                 
@@ -36,8 +48,6 @@
                 </div>
                 
                 <div class="form-options">
-                   
-
                     @if (Route::has('password.request'))
                         <a href="{{ route('password.request') }}" class="forgot-password">
                             ¿Olvidaste tu contraseña?
@@ -52,7 +62,6 @@
 
             <div class="auth-links">
                 <p>¿No tienes una cuenta? <a href="{{ route('register') }}">Regístrate</a></p>
-             
             </div>
             <div class="note-corner"></div>
         </div>
@@ -251,6 +260,19 @@
 
 .toggle-password i {
     font-size: 1.2rem;
+}
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius);
+    font-family: var(--font-handwritten);
+}
+
+.alert-danger {
+    background-color: #fee2e2;
+    border: 2px solid #ef4444;
+    color: #dc2626;
 }
 </style>
 @endpush

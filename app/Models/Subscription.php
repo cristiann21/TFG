@@ -35,6 +35,8 @@ class Subscription extends Model
 
     public function isActive()
     {
-        return $this->is_active && $this->ends_at->isFuture();
+        return $this->is_active && 
+               ($this->ends_at === null || $this->ends_at->isFuture()) && 
+               $this->payment_status === 'completed';
     }
 } 

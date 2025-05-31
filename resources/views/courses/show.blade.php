@@ -4,54 +4,46 @@
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto">
         @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
-            </div>
-        @endif
-
-        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
+            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                {{ session('error') }}
+                @if(session('show_subscription_button'))
+                    <div class="mt-2">
+                        <a href="{{ route('subscriptions.index') }}" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                            Ver Planes de Suscripción
+                        </a>
+                    </div>
+                @endif
             </div>
         @endif
 
         <div class="course-detail-page notebook-bg">
             <div class="container">
-                <!-- Breadcrumbs -->
-                <div class="breadcrumbs">
-                    <a href="{{ route('home') }}">Inicio</a>
-                    <span class="separator">/</span>
-                    <a href="{{ route('courses.index') }}">Cursos</a>
-                    <span class="separator">/</span>
-                    <span class="current">{{ $course->title }}</span>
-                </div>
-
                 <!-- Curso Header -->
-                <div class="course-header">
-                    <div class="course-header-content">
-                        <div class="course-info">
-                            <div class="course-badges">
+                <div class="course-header bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div class="course-header-content flex flex-col md:flex-row gap-6">
+                        <div class="course-info flex-1">
+                            <div class="course-badges flex flex-wrap gap-2 mb-4">
                                 @if($course->language)
-                                    <span class="badge badge-language">{{ $course->language }}</span>
+                                    <span class="badge badge-language bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">{{ $course->language }}</span>
                                 @endif
-                                <span class="badge badge-level">{{ $course->level }}</span>
+                                <span class="badge badge-level bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">{{ $course->level }}</span>
                                 @if($course->category)
-                                    <span class="badge badge-category">{{ $course->category->name }}</span>
+                                    <span class="badge badge-category bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">{{ $course->category->name }}</span>
                                 @endif
                             </div>
-                            <h1>{{ $course->title }}</h1>
-                            <p class="course-tagline">{{ Str::limit($course->description, 120) }}</p>
+                            <h1 class="text-3xl font-bold mb-4">{{ $course->title }}</h1>
+                            <p class="course-tagline text-gray-600 mb-6">{{ Str::limit($course->description, 120) }}</p>
                             
-                            <div class="course-meta">
-                                <div class="meta-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="meta-icon">
+                            <div class="course-meta space-y-3">
+                                <div class="meta-item flex items-center text-gray-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
                                         <path d="M12 20h9"></path>
                                         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                                     </svg>
                                     <span>Creado por <strong>{{ optional($course->instructor)->name ?? 'Profesor' }}</strong></span>
                                 </div>
-                                <div class="meta-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="meta-icon">
+                                <div class="meta-item flex items-center text-gray-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
                                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                         <line x1="16" y1="2" x2="16" y2="6"></line>
                                         <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -59,19 +51,14 @@
                                     </svg>
                                     <span>Última actualización: <strong>{{ $course->updated_at->format('d/m/Y') }}</strong></span>
                                 </div>
-                                <div class="meta-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="meta-icon">
-                                        <path d="M23 12a11 11 0 1 1-22 0 11 11 0 0 1 22 0z"></path>
-                                        <path d="M12 6v6l4 2"></path>
-                                    </svg>
-                                    <span><strong>{{ rand(10, 30) }}</strong> horas de contenido</span>
-                                </div>
                             </div>
                         </div>
-                        <div class="course-image-container">
-                            <div class="course-image">
-                                <img src="{{ $course->image ? Storage::url($course->image) : asset('images/course1.png') }}" alt="{{ $course->title }}">
-                                <div class="pushpin red-pin"></div>
+                        <div class="course-image-container flex-shrink-0">
+                            <div class="course-image relative">
+                                <img src="{{ $course->image ? asset('storage/' . $course->image) : asset('images/course1.png') }}" 
+                                     alt="{{ $course->title }}"
+                                     class="w-64 h-48 object-cover rounded-lg shadow-md">
+                                <div class="pushpin red-pin absolute -top-2 -right-2"></div>
                             </div>
                         </div>
                     </div>
@@ -80,8 +67,8 @@
                 <!-- Contenido Principal -->
                 <div class="course-content-container">
                     <div class="course-main-content">
-                        @if(auth()->user() && auth()->user()->courses->contains($course->id))
-                            <!-- Contenido del Curso para Usuarios que lo han Comprado -->
+                        @if(auth()->check() && (auth()->user()->courses->contains($course) || auth()->user()->id === $course->instructor_id))
+                            <!-- Contenido del Curso para Usuarios que lo han Comprado o son el Creador -->
                             <div class="content-section">
                                 <div class="postit-note blue-note">
                                     <h2>Contenido del Curso</h2>
@@ -90,7 +77,7 @@
                                             <iframe 
                                                 width="100%" 
                                                 height="400" 
-                                                src="{{ str_replace('youtu.be/', 'youtube.com/embed/', $course->video_url) }}" 
+                                                src="{{ str_replace(['youtu.be/', 'www.youtube.com/watch?v='], ['youtube.com/embed/', 'youtube.com/embed/'], $course->video_url) }}" 
                                                 frameborder="0" 
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                                 allowfullscreen>
@@ -98,30 +85,55 @@
                                         </div>
                                     @endif
 
-                                    @if($course->quiz)
-                                        <div class="quiz-section mt-6">
-                                            <h3 class="text-xl font-bold mb-4">Test del Curso</h3>
-                                            <p class="mb-4">Completa el test para obtener tu certificado de finalización.</p>
-                                            <a href="{{ route('quizzes.show', ['course' => $course, 'quiz' => $course->quiz]) }}" class="btn btn-primary">
-                                                Realizar Test
-                                            </a>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        @else
-                            <!-- Descripción del Curso -->
-                            <div class="content-section">
-                                <div class="postit-note blue-note">
-                                    <h2>Descripción del Curso</h2>
-                                    <div class="course-description">
-                                        <p>{{ $course->description }}</p>
-                                        <p>Este curso está diseñado para ayudarte a dominar {{ $course->language ?? 'este tema' }} de manera efectiva. Aprenderás desde los conceptos básicos hasta técnicas avanzadas que te permitirán desarrollar proyectos reales.</p>
-                                        <p>El contenido está estructurado de manera progresiva, permitiéndote construir sobre lo aprendido en cada lección. Incluye ejercicios prácticos, proyectos y evaluaciones para reforzar tu aprendizaje.</p>
+                                    <!-- Sección de Tests -->
+                                    <div class="quiz-section mt-6">
+                                        <h3 class="text-xl font-bold mb-4">Tests del Curso</h3>
+                                        @php
+                                            $quizzes = $course->quizzes;
+                                            $hasQuizzes = $quizzes && $quizzes->count() > 0;
+                                        @endphp
+                                        
+                                        @if($hasQuizzes)
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                @foreach($quizzes as $quiz)
+                                                    <div class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                                                        <h4 class="font-semibold text-lg mb-2">{{ $quiz->title }}</h4>
+                                                        <p class="text-gray-600 text-sm mb-4">{{ $quiz->description }}</p>
+                                                        <div class="flex items-center justify-between">
+                                                            <div class="flex items-center text-sm text-gray-500">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                                                                    <circle cx="12" cy="12" r="10"></circle>
+                                                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                                                </svg>
+                                                                {{ $quiz->questions->count() }} preguntas
+                                                            </div>
+                                                            <a href="{{ route('quizzes.show', ['course' => $course->id, 'quiz' => $quiz->id]) }}" 
+                                                               class="btn btn-primary">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                                    <path d="M12 20h9"></path>
+                                                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                                                </svg>
+                                                                Realizar Test
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="bg-white rounded-lg p-6 border border-gray-200">
+                                                <p class="text-gray-600 mb-4">No hay tests disponibles para este curso.</p>
+                                                @if(auth()->check() && auth()->user()->id === $course->instructor_id)
+                                                    <a href="{{ route('quizzes.create', $course) }}" class="btn btn-primary">
+                                                        <i class="fas fa-plus mr-2"></i>
+                                                        Crear Test
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
-
+                        @else
                             <!-- Lo que aprenderás -->
                             <div class="content-section">
                                 <div class="postit-note yellow-note">
@@ -176,7 +188,7 @@
                                     <div class="course-curriculum">
                                         <div class="curriculum-section">
                                             <div class="section-header" data-toggle="section-1">
-                                                <h3>Módulo 1: Introducción a {{ $course->language ?? 'la materia' }}</h3>
+                                                <h3>Contenido Actual</h3>
                                                 <span class="toggle-icon">+</span>
                                             </div>
                                             <div class="section-content" id="section-1">
@@ -187,19 +199,9 @@
                                                                 <circle cx="12" cy="12" r="10"></circle>
                                                                 <polygon points="10 8 16 12 10 16 10 8"></polygon>
                                                             </svg>
-                                                            <span>Lección 1: Configuración del entorno</span>
+                                                            <span>Video: Fundamentos del Curso</span>
                                                         </div>
-                                                        <span class="lesson-duration">15:30</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="lesson-info">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                <circle cx="12" cy="12" r="10"></circle>
-                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                            </svg>
-                                                            <span>Lección 2: Conceptos básicos</span>
-                                                        </div>
-                                                        <span class="lesson-duration">22:45</span>
+                                                        <span class="lesson-duration">1:30 - 2:00 horas</span>
                                                     </li>
                                                     <li>
                                                         <div class="lesson-info">
@@ -210,9 +212,9 @@
                                                                 <line x1="16" y1="17" x2="8" y2="17"></line>
                                                                 <polyline points="10 9 9 9 8 9"></polyline>
                                                             </svg>
-                                                            <span>Ejercicio: Primer proyecto</span>
+                                                            <span>Test de Evaluación</span>
                                                         </div>
-                                                        <span class="lesson-duration">10:00</span>
+                                                        <span class="lesson-duration">15 minutos</span>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -220,89 +222,17 @@
                                         
                                         <div class="curriculum-section">
                                             <div class="section-header" data-toggle="section-2">
-                                                <h3>Módulo 2: Fundamentos Avanzados</h3>
+                                                <h3>Próximamente</h3>
                                                 <span class="toggle-icon">+</span>
                                             </div>
                                             <div class="section-content" id="section-2">
-                                                <ul>
-                                                    <li>
-                                                        <div class="lesson-info">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                <circle cx="12" cy="12" r="10"></circle>
-                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                            </svg>
-                                                            <span>Lección 3: Estructuras de datos</span>
-                                                        </div>
-                                                        <span class="lesson-duration">28:15</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="lesson-info">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                <circle cx="12" cy="12" r="10"></circle>
-                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                            </svg>
-                                                            <span>Lección 4: Algoritmos</span>
-                                                        </div>
-                                                        <span class="lesson-duration">32:20</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="lesson-info">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                                                <polyline points="14 2 14 8 20 8"></polyline>
-                                                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                                                <polyline points="10 9 9 9 8 9"></polyline>
-                                                            </svg>
-                                                            <span>Ejercicio: Implementación práctica</span>
-                                                        </div>
-                                                        <span class="lesson-duration">15:45</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="curriculum-section">
-                                            <div class="section-header" data-toggle="section-3">
-                                                <h3>Módulo 3: Proyecto Final</h3>
-                                                <span class="toggle-icon">+</span>
-                                            </div>
-                                            <div class="section-content" id="section-3">
-                                                <ul>
-                                                    <li>
-                                                        <div class="lesson-info">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                <circle cx="12" cy="12" r="10"></circle>
-                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                            </svg>
-                                                            <span>Lección 5: Planificación del proyecto</span>
-                                                        </div>
-                                                        <span class="lesson-duration">20:10</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="lesson-info">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                <circle cx="12" cy="12" r="10"></circle>
-                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                            </svg>
-                                                            <span>Lección 6: Implementación</span>
-                                                        </div>
-                                                        <span class="lesson-duration">45:30</span>
-                                                    </li>
-                                                    <li>
-                                                        <div class="lesson-info">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                                                <polyline points="14 2 14 8 20 8"></polyline>
-                                                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                                                <polyline points="10 9 9 9 8 9"></polyline>
-                                                            </svg>
-                                                            <span>Proyecto Final: Entrega y evaluación</span>
-                                                        </div>
-                                                        <span class="lesson-duration">30:00</span>
-                                                    </li>
-                                                </ul>
+                                                <div class="coming-soon-message">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <circle cx="12" cy="12" r="10"></circle>
+                                                        <path d="M12 6v6l4 2"></path>
+                                                    </svg>
+                                                    <p>¡Próximamente se añadirán más videos y cursos para seguir aprendiendo!</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -371,6 +301,51 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Sección de Tests -->
+                            @if(auth()->check() && auth()->user()->courses->contains($course))
+                                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                                    <h2 class="text-xl font-bold mb-4">Tests Disponibles</h2>
+                                    
+                                    @if($course->quizzes->count() > 0)
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            @foreach($course->quizzes as $quiz)
+                                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                                    <h3 class="font-semibold text-lg mb-2">{{ $quiz->title }}</h3>
+                                                    <p class="text-gray-600 text-sm mb-4">{{ $quiz->description }}</p>
+                                                    <div class="flex items-center justify-between">
+                                                        <div class="flex items-center text-sm text-gray-500">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                                            </svg>
+                                                            {{ $quiz->questions->count() }} preguntas
+                                                        </div>
+                                                        <a href="{{ route('quizzes.show', ['course' => $course, 'quiz' => $quiz]) }}" class="btn btn-primary">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                                <path d="M12 20h9"></path>
+                                                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                                            </svg>
+                                                            Realizar Test
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="text-center py-8">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-gray-400">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                                <polyline points="10 9 9 9 8 9"></polyline>
+                                            </svg>
+                                            <p class="text-gray-500">No hay tests disponibles para este curso</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
                         @endif
                     </div>
 
@@ -389,51 +364,119 @@
                             
                             <div class="course-actions">
                                 @auth
-                                    @if(auth()->user()->getRemainingCourses() > 0)
-                                        <form action="{{ route('courses.obtain', $course->id) }}" method="POST" class="inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success">Obtener curso</button>
-                                        </form>
-                                        <p class="mt-2">Cursos restantes: {{ auth()->user()->getRemainingCourses() }}</p>
-                                    @else
-                                        <p class="text-danger">No tienes cursos disponibles para obtener.</p>
-                                    @endif
-                                    @if(!auth()->user()->courses()->where('course_id', $course->id)->exists())
-                                        @if(session('success') && session('success') === 'Curso añadido al carrito')
-                                            <div class="mb-2 text-green-600 text-sm">
-                                                {{ session('success') }}
-                                            </div>
-                                        @endif
-                                        @if(auth()->user()->cartItems()->where('course_id', $course->id)->exists())
-                                            <button disabled class="btn btn-secondary btn-block cursor-not-allowed">
+                                    @if(auth()->user()->id === $course->instructor_id)
+                                        <!-- Acciones para el creador del curso -->
+                                        <div class="space-y-4">
+                                            @if(auth()->user()->favorites()->where('course_id', $course->id)->exists())
+                                                <form action="{{ route('courses.favorites.remove', $course->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-outline btn-block">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                        </svg>
+                                                        Quitar de Favoritos
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('courses.favorites.add', $course->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-outline btn-block">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                        </svg>
+                                                        Añadir a Favoritos
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            <a href="{{ route('courses.edit', $course) }}" class="btn btn-outline btn-block">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                                                    <circle cx="9" cy="21" r="1"></circle>
-                                                    <circle cx="20" cy="21" r="1"></circle>
-                                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                                 </svg>
-                                                Ya está en el carrito
-                                            </button>
+                                                Editar Curso
+                                            </a>
+                                        </div>
+                                    @else
+                                        <!-- Acciones para otros usuarios -->
+                                        @if(auth()->user()->subscriptions()->where('is_active', true)->first()?->plan_type === 'free')
+                                            <div class="text-center">
+                                                <p class="text-gray-600 mb-4">¡Suscríbete para acceder a este curso!</p>
+                                                <a href="{{ route('subscriptions.index') }}" class="btn btn-primary btn-block">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                        <circle cx="12" cy="7" r="4"></circle>
+                                                    </svg>
+                                                    Ver Planes de Suscripción
+                                                </a>
+                                            </div>
                                         @else
-                                            <form action="{{ route('cart.add', $course) }}" method="POST" class="inline">
+                                            <form action="{{ route('courses.obtain', $course->id) }}" method="POST" class="inline">
                                                 @csrf
-                                                <button type="submit" class="btn btn-primary btn-block">
+                                                <button type="submit" class="btn btn-success">Obtener curso</button>
+                                            </form>
+                                            <p class="mt-2">Cursos restantes: {{ auth()->user()->getRemainingCourses() }}</p>
+                                        @endif
+                                        @if(!auth()->user()->courses()->where('course_id', $course->id)->exists())
+                                            @if(session('success') && (session('success') === 'Curso añadido a favoritos' || session('success') === 'Curso eliminado de favoritos'))
+                                                <div class="mb-2 text-green-600 text-sm">
+                                                    {{ session('success') }}
+                                                </div>
+                                            @endif
+                                            @if(auth()->user()->cartItems()->where('course_id', $course->id)->exists())
+                                                <button disabled class="btn btn-secondary btn-block cursor-not-allowed">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
                                                         <circle cx="9" cy="21" r="1"></circle>
                                                         <circle cx="20" cy="21" r="1"></circle>
                                                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                                                     </svg>
-                                                    Añadir al Carrito
+                                                    Ya está en el carrito
                                                 </button>
-                                            </form>
+                                            @else
+                                                <form action="{{ route('cart.add', $course) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-primary btn-block">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                            <circle cx="9" cy="21" r="1"></circle>
+                                                            <circle cx="20" cy="21" r="1"></circle>
+                                                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                                        </svg>
+                                                        Añadir al Carrito
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            <!-- Botón de Añadir a Favoritos -->
+                                            @if(auth()->user()->favorites()->where('course_id', $course->id)->exists())
+                                                <form action="{{ route('courses.favorites.remove', $course->id) }}" method="POST" class="mt-2">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-outline-danger btn-block">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                        </svg>
+                                                        Quitar de Favoritos
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('courses.favorites.add', $course->id) }}" method="POST" class="mt-2">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-outline-danger btn-block">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                                        </svg>
+                                                        Añadir a Favoritos
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        @else
+                                            <button disabled class="btn btn-secondary btn-block cursor-not-allowed">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                                </svg>
+                                                Ya tienes este curso
+                                            </button>
                                         @endif
-                                    @else
-                                        <button disabled class="btn btn-secondary btn-block cursor-not-allowed">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                            </svg>
-                                            Ya tienes este curso
-                                        </button>
                                     @endif
                                 @else
                                     <a href="{{ route('login') }}" class="btn btn-primary btn-block">
@@ -445,34 +488,6 @@
                                         Inicia sesión para comprar
                                     </a>
                                 @endauth
-                                @auth
-                                    @if(auth()->user()->favorites()->where('course_id', $course->id)->exists())
-                                        <form action="{{ route('courses.removeFromFavorites', $course->id) }}" method="POST" class="inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-outline btn-block">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                                </svg>
-                                                Quitar de Favoritos
-                                            </button>
-                                        </form>
-                                    @else
-                                        <form action="{{ route('courses.addToFavorites', $course->id) }}" method="POST" class="inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-outline btn-block">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                                                </svg>
-                                                Añadir a Favoritos
-                                            </button>
-                                        </form>
-                                    @endif
-                                    @if(session('success') && (session('success') === 'Curso añadido a favoritos' || session('success') === 'Curso eliminado de favoritos'))
-                                        <div class="mt-2 text-green-600 text-sm">
-                                            {{ session('success') }}
-                                        </div>
-                                    @endif
-                                @endauth
                             </div>
                             
                             <div class="course-includes">
@@ -483,7 +498,7 @@
                                             <path d="M23 12a11 11 0 1 1-22 0 11 11 0 0 1 22 0z"></path>
                                             <path d="M12 6v6l4 2"></path>
                                         </svg>
-                                        <span>{{ rand(10, 30) }} horas de vídeo bajo demanda</span>
+                                        <span>Videos del contenido</span>
                                     </li>
                                     <li>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -493,33 +508,7 @@
                                             <line x1="16" y1="17" x2="8" y2="17"></line>
                                             <polyline points="10 9 9 9 8 9"></polyline>
                                         </svg>
-                                        <span>{{ rand(5, 15) }} artículos y recursos</span>
-                                    </li>
-                                    <li>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                                        </svg>
-                                        <span>Acceso a foro de preguntas</span>
-                                    </li>
-                                    <li>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                        </svg>
-                                        <span>{{ rand(3, 8) }} ejercicios prácticos</span>
-                                    </li>
-                                    <li>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                                        </svg>
-                                        <span>Certificado de finalización</span>
-                                    </li>
-                                    <li>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                        </svg>
-                                        <span>Acceso de por vida</span>
+                                        <span>Tests de evaluación</span>
                                     </li>
                                 </ul>
                             </div>
@@ -663,26 +652,111 @@
 .instructor-bio p:last-child {
     margin-bottom: 0;
 }
+
+.course-description {
+    font-family: var(--font-handwritten);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.course-description h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+.course-description h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 1.5rem 0 1rem;
+    color: var(--color-secondary);
+}
+
+.course-description h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 1rem 0;
+    color: var(--color-text);
+}
+
+.course-description ul {
+    list-style-type: none;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.course-description ul li {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.course-description ul li:before {
+    content: "•";
+    color: var(--color-secondary);
+    font-weight: bold;
+    position: absolute;
+    left: -1rem;
+}
+
+.course-content {
+    background: var(--color-background);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.module {
+    border: 2px dashed var(--color-border);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.lesson {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: white;
+    border-radius: var(--border-radius);
+    margin: 0.5rem 0;
+}
+
+.lesson-title {
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.lesson-duration {
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+}
+
+.coming-soon-message {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+}
+
+.coming-soon-message svg {
+    color: var(--color-secondary);
+    flex-shrink: 0;
+}
+
+.coming-soon-message p {
+    color: var(--color-text);
+    font-family: var(--font-handwritten);
+    font-size: 1.1rem;
+    margin: 0;
+}
 </style>
 @endpush
 
 @if(!auth()->user()->courses->contains($course))
    
-@endif
-
-@if(auth()->user() && auth()->user()->id === $course->instructor_id)
-    <div class="mt-4">
-        @if(!$course->quiz)
-            <a href="{{ route('quizzes.create', $course) }}" class="btn btn-primary w-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                Crear Test
-            </a>
-        @endif
-    </div>
 @endif

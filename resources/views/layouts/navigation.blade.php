@@ -36,38 +36,44 @@
             </div>
 
             <!-- Menú de Usuario -->
-            <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                <div class="ml-3 relative">
-                    <div class="flex items-center space-x-4">
-                        <a href="{{ route('cart.index') }}" class="nav-link">
-                            <i class="fas fa-shopping-cart mr-2"></i>
-                            Carrito
+            <div class="hidden sm:flex sm:items-center sm:ml-6">
+                @auth
+                    @if(auth()->user()->isTeacher())
+                        <a href="{{ route('profile.courses') }}" class="btn btn-primary mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            Mis Cursos Creados
                         </a>
-
-                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="flex items-center space-x-2 nav-link">
-                                <span>{{ auth()->user()->name }}</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-
-                            <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
-                                <a href="{{ route('profile.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-user mr-2"></i>
-                                    Mi Perfil
-                                </a>
-
-                                <form method="POST" action="{{ route('logout') }}" class="w-full">
-                                    @csrf
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm bg-blue-500 text-white hover:bg-red-600 transition-colors duration-200">
-                                        <i class="fas fa-sign-out-alt mr-2"></i>
-                                        Cerrar Sesión
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    @endif
+                    <a href="{{ route('profile.edit') }}" class="btn btn-orange">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Editar Perfil
+                    </a>
+                @endauth
             </div>
         </div>
     </div>
-</nav> 
+</nav>
+
+@push('styles')
+<style>
+.btn-orange {
+    background-color: #f97316;
+    color: white;
+}
+
+.btn-orange:hover {
+    background-color: #ea580c;
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+</style>
+@endpush 

@@ -59,11 +59,11 @@
                     <div class="space-y-3">
                         <div class="flex items-center">
                             <i class="fas fa-user text-gray-500 w-6"></i>
-                            <span class="ml-2">{{ auth()->user()->name }}</span>
+                            Nombre: <span class="ml-2">{{ auth()->user()->name }}</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-envelope text-gray-500 w-6"></i>
-                            <span class="ml-2">{{ auth()->user()->email }}</span>
+                            Email: <span class="ml-2">{{ auth()->user()->email }}</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-user-tag text-gray-500 w-6"></i>
@@ -71,12 +71,12 @@
                                 @if(auth()->user()->isTeacher())
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                                         <i class="fas fa-chalkboard-teacher mr-1"></i>
-                                        Profesor
+                                        Rol: Profesor
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                         <i class="fas fa-user-graduate mr-1"></i>
-                                        Estudiante
+                                        Rol: Estudiante
                                     </span>
                                 @endif
                             </span>
@@ -95,13 +95,6 @@
                             </span>
                             <span class="font-semibold">{{ optional(auth()->user()->courses)->count() ?? 0 }}</span>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="flex items-center">
-                                <i class="fas fa-check-circle text-gray-500 w-6"></i>
-                                <span class="ml-2">Cursos Completados</span>
-                            </span>
-                            <span class="font-semibold">{{ optional(auth()->user()->courses)->where('status', 'completed')->count() ?? 0 }}</span>
-                        </div>
                         @if(auth()->user()->isTeacher())
                             <div class="flex items-center justify-between">
                                 <span class="flex items-center">
@@ -115,15 +108,19 @@
                 </div>
             </div>
 
-            <!-- Botón Ver Cursos -->
-            @if(optional(auth()->user()->courses)->count() > 0)
-                <div class="text-center mb-8">
-                    <a href="{{ route('profile.courses') }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-graduation-cap mr-2"></i>
-                        Ver Mis Cursos Adquiridos
+            <!-- Botones de Cursos -->
+            <div class="flex justify-center space-x-4 mb-8">
+                @if(auth()->user()->isTeacher())
+                    <a href="{{ route('profile.courses') }}" class="btn btn-primary">
+                        <i class="fas fa-chalkboard mr-2"></i>
+                        Mis Cursos Creados
                     </a>
-                </div>
-            @endif
+                @endif
+                <a href="{{ route('profile.enrolled-courses') }}" class="btn btn-primary">
+                    <i class="fas fa-graduation-cap mr-2"></i>
+                    Mis Cursos Adquiridos
+                </a>
+            </div>
 
             <!-- Cursos Favoritos -->
             <div class="bg-white p-6 rounded-lg shadow-sm">
@@ -140,8 +137,9 @@
                                         <span class="font-medium hover:text-blue-600">{{ $favorite->title }}</span>
                                     </a>
                                 </div>
-                                <form action="{{ route('courses.removeFromFavorites', $favorite->id) }}" method="POST">
+                                <form action="{{ route('courses.favorites.remove', $favorite->id) }}" method="POST">
                                     @csrf
+                                    @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash-alt mr-1"></i>
                                         Eliminar

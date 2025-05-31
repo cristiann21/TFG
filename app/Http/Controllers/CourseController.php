@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Quiz;
 use App\Models\QuizQuestion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
@@ -83,6 +85,13 @@ class CourseController extends Controller
 
     public function show(Course $course)
     {
+        // Cargar el curso con sus tests y preguntas
+        $course = Course::with(['quizzes' => function($query) {
+            $query->with(['questions' => function($query) {
+                $query->orderBy('id');
+            }]);
+        }])->find($course->id);
+
         // Obtener cursos relacionados (mismo lenguaje o categoría)
         $relatedCourses = Course::where('id', '!=', $course->id)
             ->where(function($query) use ($course) {
@@ -98,20 +107,82 @@ class CourseController extends Controller
     public function obtain(Course $course)
     {
         $user = auth()->user();
-        
+        $subscription = $user->subscriptions()->where('is_active', true)->first();
+
         // Verificar si el usuario ya tiene el curso
         if ($user->courses()->where('course_id', $course->id)->exists()) {
-            return redirect()->back()->with('error', 'Ya tienes este curso en tu cuenta.');
+            return back()->with('error', 'Ya tienes este curso en tu cuenta.');
         }
 
-        if ($user->getRemainingCourses() <= 0) {
-            return redirect()->back()->with('error', 'No tienes cursos disponibles para obtener.');
+        // Verificar si el usuario tiene una suscripción activa y válida
+        if (!$subscription || !$subscription->isActive()) {
+            return back()->with('error', 'Necesitas una suscripción activa para obtener cursos.');
         }
 
-        // Añadir el curso al usuario
-        $user->courses()->attach($course->id);
+        // Verificar si el plan permite obtener cursos
+        if ($subscription->plan_type === 'free') {
+            return back()->with('error', '¡Suscríbete ahora para acceder a este curso!')
+                        ->with('show_subscription_button', true);
+        }
 
-        return redirect()->back()->with('success', 'Curso obtenido con éxito.');
+        // Verificar límite de cursos según el plan
+        $maxCourses = $subscription->plan_type === 'trial' ? 3 : 25;
+        $currentCourses = $user->courses()->count();
+        
+        if ($currentCourses >= $maxCourses) {
+            return back()->with('error', 'Has alcanzado el límite de cursos para tu plan actual.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Añadir el curso al usuario
+            $user->courses()->attach($course->id);
+
+            // Recargar el curso con sus tests y preguntas
+            $course = Course::with(['quizzes' => function($query) {
+                $query->with(['questions' => function($query) {
+                    $query->orderBy('id');
+                }]);
+            }])->find($course->id);
+
+            // Debug: Verificar si hay tests
+            \Log::info('Tests del curso:', [
+                'course_id' => $course->id,
+                'quizzes_count' => $course->quizzes->count(),
+                'quizzes' => $course->quizzes->toArray()
+            ]);
+
+            // Obtener cursos relacionados
+            $relatedCourses = Course::where('id', '!=', $course->id)
+                ->where(function($query) use ($course) {
+                    $query->where('language', $course->language)
+                          ->orWhere('category_id', $course->category_id);
+                })
+                ->take(3)
+                ->get();
+
+            DB::commit();
+
+            // Asegurarse de que los tests estén disponibles
+            if ($course->quizzes->isEmpty()) {
+                // Intentar cargar los tests directamente
+                $quizzes = Quiz::where('course_id', $course->id)
+                    ->with(['questions' => function($query) {
+                        $query->orderBy('id');
+                    }])
+                    ->get();
+                
+                $course->setRelation('quizzes', $quizzes);
+            }
+
+            return view('courses.show', compact('course', 'relatedCourses'))
+                ->with('success', '¡Curso añadido a tu cuenta!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error al obtener el curso: ' . $e->getMessage());
+            return back()->with('error', 'Error al procesar la solicitud: ' . $e->getMessage());
+        }
     }
 
     public function addToFavorites(Course $course)
@@ -128,10 +199,6 @@ class CourseController extends Controller
 
     public function create()
     {
-        if (!auth()->check() || auth()->user()->role !== 'teacher') {
-            abort(403, 'No tienes permiso para acceder a esta página.');
-        }
-
         $categories = Category::all();
         return view('courses.create', compact('categories'));
     }
@@ -146,64 +213,57 @@ class CourseController extends Controller
             'language' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'video_url' => 'nullable|url',
-            'questions' => 'nullable|array',
-            'questions.*.question_text' => 'required|string',
-            'questions.*.option_a' => 'required|string',
-            'questions.*.option_b' => 'required|string',
-            'questions.*.option_c' => 'required|string',
-            'questions.*.option_d' => 'required|string',
-            'questions.*.correct_option' => 'required|in:a,b,c,d'
+            'video_url' => 'nullable|url'
         ]);
 
-        $imagePath = $request->file('image')->store('courses', 'public');
+        try {
+            DB::beginTransaction();
 
-        $course = Course::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'price' => $request->price,
-            'level' => $request->level,
-            'language' => $request->language,
-            'category_id' => $request->category_id,
-            'image' => $imagePath,
-            'video_url' => $request->video_url,
-            'instructor_id' => auth()->id(),
-            'created_by' => auth()->id()
-        ]);
+            // Crear el directorio si no existe
+            if (!file_exists(public_path('images/courses'))) {
+                mkdir(public_path('images/courses'), 0777, true);
+            }
 
-        // Crear el test si hay preguntas
-        if ($request->has('questions') && !empty($request->questions)) {
-            $quiz = Quiz::create([
-                'course_id' => $course->id,
-                'title' => 'Test de ' . $course->title,
-                'description' => 'Test de evaluación para el curso ' . $course->title,
-                'passing_score' => 70
+            // Guardar la imagen
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images/courses'), $imageName);
+            $imagePath = 'images/courses/' . $imageName;
+
+            $course = Course::create([
+                'title' => $request->title,
+                'description' => $request->description,
+                'price' => $request->price,
+                'level' => $request->level,
+                'language' => $request->language,
+                'category_id' => $request->category_id,
+                'image' => $imagePath,
+                'video_url' => $request->video_url,
+                'instructor_id' => auth()->id(),
+                'created_by' => auth()->id()
             ]);
 
-            foreach ($request->questions as $questionData) {
-                QuizQuestion::create([
-                    'quiz_id' => $quiz->id,
-                    'question' => $questionData['question_text'],
-                    'options' => json_encode([
-                        $questionData['option_a'],
-                        $questionData['option_b'],
-                        $questionData['option_c'],
-                        $questionData['option_d']
-                    ]),
-                    'correct_option' => array_search($questionData['correct_option'], ['a', 'b', 'c', 'd'])
-                ]);
-            }
-        }
+            DB::commit();
 
-        return redirect()->route('courses.show', $course)
-            ->with('success', 'Curso creado exitosamente');
+            return redirect()->route('courses.show', $course)
+                ->with('success', 'Curso creado exitosamente');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()
+                ->with('error', 'Error al crear el curso: ' . $e->getMessage());
+        }
     }
 
     public function edit(Course $course)
     {
-        if (!auth()->check() || auth()->user()->role !== 'teacher' || $course->created_by !== auth()->id()) {
+        if ($course->created_by !== auth()->id()) {
             abort(403, 'No tienes permiso para editar este curso.');
         }
+
+        // Cargar los tests del curso con sus preguntas
+        $course->load(['quizzes' => function($query) {
+            $query->with('questions');
+        }]);
 
         $categories = Category::all();
         return view('courses.edit', compact('course', 'categories'));
@@ -211,43 +271,73 @@ class CourseController extends Controller
 
     public function update(Request $request, Course $course)
     {
-        if (!auth()->check() || auth()->user()->role !== 'teacher' || $course->created_by !== auth()->id()) {
+        // Verificar permisos
+        if ($course->created_by !== auth()->id()) {
             abort(403, 'No tienes permiso para editar este curso.');
         }
 
-        $request->validate([
+        // Validar los datos
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'level' => 'required|in:Principiante,Intermedio,Avanzado',
             'language' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
+            'video_url' => 'nullable|url',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        $data = $request->all();
+        try {
+            DB::beginTransaction();
 
-        if ($request->hasFile('image')) {
-            // Eliminar la imagen anterior si existe
-            if ($course->image && file_exists(public_path($course->image))) {
-                unlink(public_path($course->image));
+            // Preparar los datos para actualizar
+            $data = [
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'price' => $validated['price'],
+                'level' => $validated['level'],
+                'language' => $validated['language'],
+                'category_id' => $validated['category_id'],
+                'video_url' => $validated['video_url'] ?? null
+            ];
+
+            // Manejar la imagen si se subió una nueva
+            if ($request->hasFile('image')) {
+                // Eliminar la imagen anterior si existe
+                if ($course->image && file_exists(public_path($course->image))) {
+                    unlink(public_path($course->image));
+                }
+
+                // Guardar la nueva imagen
+                $image = $request->file('image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('images/courses'), $imageName);
+                $data['image'] = 'images/courses/' . $imageName;
             }
 
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/courses'), $imageName);
-            $data['image'] = 'images/courses/' . $imageName;
+            // Actualizar el curso
+            $course->fill($data);
+            $course->save();
+
+            DB::commit();
+
+            return redirect()->route('courses.show', $course)
+                ->with('success', 'Curso actualizado exitosamente');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error al actualizar el curso:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withInput()
+                ->with('error', 'Error al actualizar el curso: ' . $e->getMessage());
         }
-
-        $course->update($data);
-
-        return redirect()->route('profile.courses')
-            ->with('success', 'Curso actualizado exitosamente.');
     }
 
     public function destroy(Course $course)
     {
-        if (!auth()->check() || auth()->user()->role !== 'teacher' || $course->created_by !== auth()->id()) {
+        if ($course->created_by !== auth()->id()) {
             abort(403, 'No tienes permiso para eliminar este curso.');
         }
 

@@ -61,26 +61,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/courses', [ProfileController::class, 'courses'])->name('profile.courses');
     Route::get('/profile/enrolled-courses', [ProfileController::class, 'enrolledCourses'])->name('profile.enrolled-courses');
     
-    Route::middleware('teacher')->group(function () {
-        Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
-        Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
-        Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
-        Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
-        Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
-    });
-
-    Route::controller(CourseController::class)->group(function () {
-        Route::get('/courses', 'index')->name('courses.index');
-        Route::get('/courses/{course}', 'show')->name('courses.show');
-        Route::post('/courses/{course}/obtain', 'obtain')->name('courses.obtain');
-        Route::post('/courses/{course}/addToFavorites', 'addToFavorites')->name('courses.addToFavorites');
-        Route::post('/courses/{course}/removeFromFavorites', 'removeFromFavorites')->name('courses.removeFromFavorites');
-        Route::get('/courses/create', 'create')->name('courses.create');
-        Route::post('/courses', 'store')->name('courses.store');
-        Route::get('/courses/{course}/edit', 'edit')->name('courses.edit');
-        Route::put('/courses/{course}', 'update')->name('courses.update');
-        Route::delete('/courses/{course}', 'destroy')->name('courses.destroy');
-    });
+    // Rutas de cursos protegidas solo con 'auth'
+    Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
+    Route::post('/courses', [CourseController::class, 'store'])->name('courses.store');
+    Route::get('/courses/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+    Route::put('/courses/{course}', [CourseController::class, 'update'])->name('courses.update');
+    Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('courses.destroy');
+    
+    // Rutas públicas de cursos
+    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
+    Route::post('/courses/{course}/obtain', [CourseController::class, 'obtain'])->name('courses.obtain');
+    Route::post('/courses/{course}/favorites', [CourseController::class, 'addToFavorites'])->name('courses.favorites.add');
+    Route::delete('/courses/{course}/favorites', [CourseController::class, 'removeFromFavorites'])->name('courses.favorites.remove');
     
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'index')->name('profile.index');
@@ -96,11 +89,9 @@ Route::middleware(['auth'])->group(function () {
     
     Route::controller(SubscriptionController::class)->group(function () {
         Route::get('/subscriptions', 'index')->name('subscriptions.index');
-        Route::post('/subscriptions', 'store')->name('subscriptions.store');
-        Route::post('/subscriptions/subscribe', 'subscribe')->name('subscriptions.subscribe');
+        Route::get('/subscriptions/checkout/{plan}', 'checkout')->name('subscriptions.checkout');
+        Route::post('/subscriptions/process', 'process')->name('subscriptions.process');
         Route::post('/subscriptions/cancel', 'cancel')->name('subscriptions.cancel');
-        Route::post('/subscriptions/upgrade', [SubscriptionController::class, 'upgrade'])->name('subscriptions.upgrade');
-        Route::post('/subscriptions/downgrade', [SubscriptionController::class, 'downgrade'])->name('subscriptions.downgrade');
     });
     
     Route::get('/teacher-request', [TeacherRequestController::class, 'show'])->name('teacher-request.show');
@@ -128,10 +119,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/courses/{course}/quiz', [QuizController::class, 'submit'])->name('quiz.submit');
 
     // Rutas para tests
-    Route::get('/courses/{course}/quiz/create', [QuizController::class, 'create'])->name('quizzes.create');
-    Route::post('/courses/{course}/quiz', [QuizController::class, 'store'])->name('quizzes.store');
-    Route::get('/courses/{course}/quiz/{quiz}', [QuizController::class, 'show'])->name('quizzes.show');
-    Route::post('/courses/{course}/quiz/{quiz}/submit', [QuizController::class, 'submit'])->name('quizzes.submit');
+    Route::prefix('courses/{course}/quizzes')->name('quizzes.')->group(function () {
+        Route::get('/create', [QuizController::class, 'create'])->name('create');
+        Route::post('/', [QuizController::class, 'store'])->name('store');
+        Route::get('/{quiz}', [QuizController::class, 'show'])->name('show');
+        Route::get('/{quiz}/edit', [QuizController::class, 'edit'])->name('edit');
+        Route::put('/{quiz}', [QuizController::class, 'update'])->name('update');
+        Route::delete('/{quiz}', [QuizController::class, 'destroy'])->name('destroy');
+        Route::post('/{quiz}/submit', [QuizController::class, 'submit'])->name('submit');
+    });
+
+    // Rutas de suscripciones
+    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+    Route::get('/subscriptions/checkout/{plan}', [SubscriptionController::class, 'checkout'])->name('subscriptions.checkout');
+    Route::get('/subscriptions/success/{plan}', [SubscriptionController::class, 'success'])->name('subscriptions.success');
+    Route::get('/subscriptions/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
 });
 
 Route::get('/practica-html', function() {

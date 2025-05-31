@@ -52,30 +52,27 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
         
-        if ($user->isTeacher()) {
-            // Si es profesor, mostrar cursos creados
-            $courses = Course::where('instructor_id', $user->id)
-                ->orderBy('created_at', 'desc')
-                ->get();
-            return view('profile.courses', compact('courses'));
-        } else {
-            // Si es estudiante, redirigir a cursos adquiridos
+        if (!$user->isTeacher()) {
             return redirect()->route('profile.enrolled-courses');
         }
+
+        // Obtener SOLO los cursos creados por el profesor
+        $courses = Course::where('instructor_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        return view('profile.courses', compact('courses'));
     }
 
     public function enrolledCourses()
     {
         $user = auth()->user();
         
-        // Obtener solo los cursos que el usuario ha comprado
+        // Obtener SOLO los cursos que el usuario ha comprado/adquirido
         $courses = Course::whereHas('users', function($query) use ($user) {
             $query->where('users.id', $user->id);
         })
-        ->where(function($query) use ($user) {
-            $query->where('instructor_id', '!=', $user->id)
-                  ->where('created_by', '!=', $user->id);
-        })
+        ->where('instructor_id', '!=', $user->id) // Excluir cursos creados por el usuario
         ->orderBy('created_at', 'desc')
         ->get();
         

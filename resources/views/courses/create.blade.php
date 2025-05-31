@@ -168,21 +168,11 @@
                     <p class="mt-1 text-sm text-gray-500">Pega la URL del video de YouTube que quieres incluir en el curso.</p>
                 </div>
 
-                <div class="mb-6 border-t pt-6">
-                    <h2 class="text-xl font-semibold mb-4">Test del Curso</h2>
-                    
-                    <div id="questions-container">
-                        <!-- Las preguntas se añadirán aquí dinámicamente -->
-                    </div>
-
-                    <div class="mt-4">
-                        <button type="button" id="add-question" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                            </svg>
-                            Añadir Pregunta
-                        </button>
-                    </div>
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                    <p class="text-blue-700">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Podrás crear tests para este curso después de crearlo.
+                    </p>
                 </div>
 
                 <div class="flex justify-end space-x-4">

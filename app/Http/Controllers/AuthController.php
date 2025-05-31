@@ -19,6 +19,10 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // Regenerar la sesión y el token CSRF
+        $request->session()->regenerate();
+        $request->session()->regenerateToken();
+
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
