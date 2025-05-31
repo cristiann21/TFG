@@ -77,7 +77,7 @@
                             <i class="fas fa-envelope"></i>
                             <div>
                                 <h3>Correo Electrónico</h3>
-                                <p>contacto@pincode.com</p>
+                                <p>rstpwdpincode@gmail.com</p>
                             </div>
                         </div>
                         
@@ -85,17 +85,10 @@
                             <i class="fas fa-phone"></i>
                             <div>
                                 <h3>Teléfono</h3>
-                                <p>+1 234 567 890</p>
+                                <p>+34 645 478 587</p>
                             </div>
                         </div>
                         
-                        <div class="info-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div>
-                                <h3>Dirección</h3>
-                                <p>123 Calle Principal<br>Ciudad, País</p>
-                            </div>
-                        </div>
                         
                         <div class="info-item">
                             <i class="fas fa-clock"></i>

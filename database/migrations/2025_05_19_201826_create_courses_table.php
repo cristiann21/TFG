@@ -15,7 +15,10 @@ return new class extends Migration
             $table->decimal('price', 8, 2);
             $table->string('level');
             $table->string('image')->nullable();
+            $table->string('video_url')->nullable();
+            $table->json('content')->nullable();
             $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('instructor_id')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

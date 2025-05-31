@@ -34,13 +34,7 @@
                         <h2 class="text-xl font-bold">Mi Carrito</h2>
                         <form action="{{ route('cart.clear') }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-danger">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                                    <path d="M3 6h18"></path>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
-                                Vaciar Carrito
-                            </button>
+                          
                         </form>
                     </div>
 
@@ -75,15 +69,22 @@
                             <span class="font-bold text-lg">{{ number_format($total * 1.21, 2) }} €</span>
                         </div>
 
-                        <form action="{{ route('cart.checkout') }}" method="POST" class="mt-4">
-                            @csrf
-                            <button type="submit" class="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-                                </svg>
-                                Pagar con Stripe
-                            </button>
-                        </form>
+                        <div class="flex space-x-4">
+                            <form action="{{ route('cart.checkout') }}" method="POST" class="flex-1">
+                                @csrf
+                                <button type="submit" class="btn btn-primary w-full">
+                                    <i class="fas fa-credit-card mr-2"></i>
+                                    Proceder al Pago
+                                </button>
+                            </form>
+                            <form action="{{ route('cart.clear') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-outline">
+                                    <i class="fas fa-trash mr-2"></i>
+                                    Vaciar Carrito
+                                </button>
+                            </form>
+                        </div>
 
                         <p class="text-sm text-gray-500 mt-2 text-center">
                             El pago se procesará de forma segura a través de Stripe

@@ -86,10 +86,7 @@
 
                 <!-- Estadísticas -->
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-xl font-semibold mb-4 flex items-center">
-                        <i class="fas fa-chart-bar mr-2"></i>
-                        Estadísticas
-                    </h2>
+                    
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="flex items-center">

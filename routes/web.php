@@ -12,6 +12,8 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TeacherRequestController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\StripeController;
+use App\Http\Controllers\QuizController;
 
 // ==================================================
 // ** RUTAS DE RESTABLECIMIENTO **
@@ -57,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     
     Route::get('/profile/courses', [ProfileController::class, 'courses'])->name('profile.courses');
+    Route::get('/profile/enrolled-courses', [ProfileController::class, 'enrolledCourses'])->name('profile.enrolled-courses');
     
     Route::middleware('teacher')->group(function () {
         Route::get('/courses/create', [CourseController::class, 'create'])->name('courses.create');
@@ -84,6 +87,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/profile/edit', 'edit')->name('profile.edit');
         Route::put('/profile', 'update')->name('profile.update');
         Route::get('/profile/courses', 'courses')->name('profile.courses');
+        Route::get('/profile/enrolled-courses', 'enrolledCourses')->name('profile.enrolled-courses');
     });
     
     Route::controller(PurchaseController::class)->group(function () {
@@ -95,6 +99,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/subscriptions', 'store')->name('subscriptions.store');
         Route::post('/subscriptions/subscribe', 'subscribe')->name('subscriptions.subscribe');
         Route::post('/subscriptions/cancel', 'cancel')->name('subscriptions.cancel');
+        Route::post('/subscriptions/upgrade', [SubscriptionController::class, 'upgrade'])->name('subscriptions.upgrade');
+        Route::post('/subscriptions/downgrade', [SubscriptionController::class, 'downgrade'])->name('subscriptions.downgrade');
     });
     
     Route::get('/teacher-request', [TeacherRequestController::class, 'show'])->name('teacher-request.show');
@@ -108,5 +114,26 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add/{course}', [CartController::class, 'add'])->name('cart.add');
     Route::delete('/cart/remove/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::get('/cart/success', [CartController::class, 'success'])->name('cart.success');
+    Route::get('/cart/cancel', [CartController::class, 'cancel'])->name('cart.cancel');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+
+    // Rutas de Stripe
+    Route::get('/stripe/checkout/{course}', [StripeController::class, 'checkout'])->name('stripe.checkout');
+    Route::get('/stripe/success/{course}', [StripeController::class, 'success'])->name('stripe.success');
+    Route::get('/stripe/cancel', [StripeController::class, 'cancel'])->name('stripe.cancel');
+
+    // Rutas del test
+    Route::get('/courses/{course}/quiz', [QuizController::class, 'show'])->name('quiz.show');
+    Route::post('/courses/{course}/quiz', [QuizController::class, 'submit'])->name('quiz.submit');
+
+    // Rutas para tests
+    Route::get('/courses/{course}/quiz/create', [QuizController::class, 'create'])->name('quizzes.create');
+    Route::post('/courses/{course}/quiz', [QuizController::class, 'store'])->name('quizzes.store');
+    Route::get('/courses/{course}/quiz/{quiz}', [QuizController::class, 'show'])->name('quizzes.show');
+    Route::post('/courses/{course}/quiz/{quiz}/submit', [QuizController::class, 'submit'])->name('quizzes.submit');
+});
+
+Route::get('/practica-html', function() {
+    return view('practica-html');
 });

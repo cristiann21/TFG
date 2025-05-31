@@ -5,7 +5,7 @@
     <div class="profile-edit-page">
         <h1>Editar Perfil</h1>
         
-        <form method="POST" action="{{ route('profile.update') }}" class="profile-form">
+        <form method="POST" action="{{ route('profile.update') }}" class="profile-form" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             
@@ -28,6 +28,28 @@
                     </span>
                 @enderror
             </div>
+
+            @if(auth()->user()->isTeacher())
+                <div class="form-group">
+                    <label for="avatar">Foto de Perfil</label>
+                    <div class="avatar-preview mb-3">
+                        @if(auth()->user()->avatar)
+                            <img src="{{ asset(auth()->user()->avatar) }}" alt="Avatar actual" class="current-avatar">
+                        @else
+                            <div class="no-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        @endif
+                    </div>
+                    <input type="file" id="avatar" name="avatar" class="form-control @error('avatar') is-invalid @enderror" accept="image/*">
+                    <p class="text-sm text-gray-500 mt-1">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 2MB</p>
+                    @error('avatar')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            @endif
             
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
@@ -142,6 +164,32 @@
     border-color: #dc2626 !important;
 }
 
+.avatar-preview {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--color-secondary);
+}
+
+.current-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-avatar {
+    width: 100%;
+    height: 100%;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 3rem;
+}
+
 @media (max-width: 768px) {
     .profile-edit-page {
         padding: 1rem;
@@ -158,5 +206,31 @@
     }
 }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const avatarInput = document.getElementById('avatar');
+    const avatarPreview = document.querySelector('.avatar-preview');
+    
+    if (avatarInput) {
+        avatarInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'current-avatar';
+                    avatarPreview.innerHTML = '';
+                    avatarPreview.appendChild(img);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
 @endpush
 @endsection 

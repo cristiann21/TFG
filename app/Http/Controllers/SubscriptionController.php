@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\User;
 
 class SubscriptionController extends Controller
 {
@@ -108,5 +109,43 @@ class SubscriptionController extends Controller
         }
 
         return back()->with('error', 'No se encontró una suscripción activa');
+    }
+
+    public function upgrade()
+    {
+        $user = auth()->user();
+        
+        // Crear nueva suscripción premium
+        $subscription = new Subscription([
+            'plan_type' => 'premium',
+            'price' => 9.99,
+            'starts_at' => now(),
+            'ends_at' => now()->addMonth(),
+            'is_active' => true,
+            'payment_status' => 'pending'
+        ]);
+
+        $user->subscriptions()->save($subscription);
+
+        return redirect()->route('subscriptions.index')
+            ->with('success', '¡Felicidades! Ahora eres usuario premium.');
+    }
+
+    public function downgrade()
+    {
+        $user = auth()->user();
+        
+        // Desactivar suscripción actual
+        $activeSubscription = $user->subscriptions()
+            ->where('is_active', true)
+            ->where('ends_at', '>', now())
+            ->first();
+
+        if ($activeSubscription) {
+            $activeSubscription->update(['is_active' => false]);
+        }
+
+        return redirect()->route('subscriptions.index')
+            ->with('success', 'Has cambiado a plan gratuito.');
     }
 } 

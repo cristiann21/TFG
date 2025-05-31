@@ -73,7 +73,6 @@
                             </div>
 
                             <div class="filter-actions">
-                                <button type="submit" class="btn btn-blue">Aplicar Filtros</button>
                                 <a href="{{ route('courses.index') }}" class="btn btn-outline">Limpiar</a>
                             </div>
                         </div>

@@ -3,7 +3,7 @@
 @section('content')
 <div class="auth-page">
     <div class="auth-container">
-        <div class="postit-note yellow-note auth-card">
+        <div class="postit-note  auth-card">
             <h2>Recuperar Contraseña</h2>
             <p>Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña</p>
             
@@ -21,7 +21,7 @@
                     <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required autofocus>
                     @error('email')
                         <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                            <strong>El correo electrónico no está registrado</strong>
                         </span>
                     @enderror
                 </div>

@@ -3,54 +3,40 @@
 @section('content')
 <div class="auth-page">
     <div class="auth-container">
-        <div class="postit-note {{ request()->has('role') && request()->role === 'teacher' ? 'yellow-note' : 'blue-note' }} auth-card">
-            <h2>
-                @if(request()->has('role') && request()->role === 'teacher')
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    Acceso Profesor
-                @else
-                    Iniciar Sesión
-                @endif
-            </h2>
-            <p>
-                @if(request()->has('role') && request()->role === 'teacher')
-                    Accede con tus credenciales de profesor para gestionar cursos.
-                @else
-                    ¡Bienvenido de nuevo! Ingresa tus credenciales para continuar.
-                @endif
-            </p>
+        <div class="postit-note auth-card">
+            <h2>Iniciar Sesión</h2>
+            <p>¡Bienvenido de nuevo! Ingresa tus credenciales para continuar.</p>
             
             <form method="POST" action="{{ route('login') }}" class="auth-form">
                 @csrf
-                @if(request()->has('role') && request()->role === 'teacher')
-                    <input type="hidden" name="role" value="teacher">
-                @endif
                 
                 <div class="form-group">
                     <label for="email">Correo Electrónico</label>
                     <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                     @error('email')
                         <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                            <strong>El correo electrónico o contraseña son incorrectos</strong>
                         </span>
                     @enderror
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Contraseña</label>
-                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                    <div class="password-input-container">
+                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                     @error('password')
                         <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                            <strong>La contraseña es incorrecta</strong>
                         </span>
                     @enderror
                 </div>
                 
                 <div class="form-options">
-                    <div class="remember-me">
-                        <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                        <label for="remember">Recordarme</label>
-                    </div>
+                   
 
                     @if (Route::has('password.request'))
                         <a href="{{ route('password.request') }}" class="forgot-password">
@@ -60,31 +46,13 @@
                 </div>
                 
                 <button type="submit" class="btn btn-primary">
-                    @if(request()->has('role') && request()->role === 'teacher')
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        Acceder como Profesor
-                    @else
-                        Iniciar Sesión
-                    @endif
+                    Iniciar Sesión
                 </button>
             </form>
 
             <div class="auth-links">
-                @if(request()->has('role') && request()->role === 'teacher')
-                    <p><a href="{{ route('login') }}" class="switch-role">
-                        <i class="fas fa-user-graduate"></i>
-                        Cambiar a Acceso Estudiante
-                    </a></p>
-                @else
-                    <p>¿No tienes una cuenta? <a href="{{ route('register') }}">Regístrate</a></p>
-                    <p><a href="{{ route('password.request') }}" class="forgot-password">¿Olvidaste tu contraseña?</a></p>
-                    <p class="teacher-link">
-                        <a href="{{ route('login') }}?role=teacher" class="teacher-btn">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                            Acceder como Profesor
-                        </a>
-                    </p>
-                @endif
+                <p>¿No tienes una cuenta? <a href="{{ route('register') }}">Regístrate</a></p>
+             
             </div>
             <div class="note-corner"></div>
         </div>
@@ -126,14 +94,6 @@
     color: var(--color-text);
     margin-bottom: 1rem;
     text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.auth-card h2 i {
-    color: var(--color-secondary);
 }
 
 .auth-card p {
@@ -218,50 +178,6 @@
     text-decoration: underline;
 }
 
-.teacher-link {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--color-border);
-}
-
-.teacher-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--color-primary);
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.teacher-btn:hover {
-    color: var(--color-secondary);
-    text-decoration: underline;
-}
-
-.teacher-btn i {
-    font-size: 1.1rem;
-}
-
-.switch-role {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--color-text);
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.switch-role:hover {
-    color: var(--color-secondary);
-    text-decoration: underline;
-}
-
-.switch-role i {
-    font-size: 1.1rem;
-}
-
 .btn {
     width: 100%;
     padding: 0.75rem 1.5rem;
@@ -270,10 +186,6 @@
     border-radius: var(--border-radius);
     transition: all 0.3s ease;
     margin-top: 0.5rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
 }
 
 .btn-primary {
@@ -285,19 +197,6 @@
 .btn-primary:hover {
     transform: scale(1.05);
     background-color: #d97706;
-}
-
-.alert {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: var(--border-radius);
-    font-size: 0.875rem;
-}
-
-.alert-success {
-    background-color: #dcfce7;
-    color: #166534;
-    border: 1px solid #86efac;
 }
 
 .invalid-feedback {
@@ -326,5 +225,51 @@
         align-items: flex-start;
     }
 }
+
+.password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-light);
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: var(--color-secondary);
+}
+
+.toggle-password i {
+    font-size: 1.2rem;
+}
 </style>
+@endpush
+
+@push('scripts')
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const toggleButton = document.querySelector('.toggle-password i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleButton.classList.remove('fa-eye');
+        toggleButton.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleButton.classList.remove('fa-eye-slash');
+        toggleButton.classList.add('fa-eye');
+    }
+}
+</script>
 @endpush

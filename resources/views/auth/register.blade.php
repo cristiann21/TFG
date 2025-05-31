@@ -3,7 +3,7 @@
 @section('content')
 <div class="auth-page">
     <div class="auth-container">
-        <div class="postit-note yellow-note auth-card">
+        <div class="postit-note  auth-card">
             <h2>Crear Cuenta</h2>
             <p>¡Únete a nuestra comunidad! Crea tu cuenta para comenzar.</p>
             
@@ -31,7 +31,7 @@
                     <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
                     @error('email')
                         <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                            <strong>El correo electrónico ya está en uso</strong>
                         </span>
                     @enderror
                 </div>
@@ -41,10 +41,9 @@
                     <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
                     @error('password')
                         <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                            <strong>Las contraseñas no coinciden</strong>
                         </span>
                     @enderror
-    
                 </div>
                 
                 <div class="form-group">
@@ -61,7 +60,7 @@
                     </div>
                     @error('terms')
                         <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                            <strong>Debes aceptar los términos y condiciones</strong>
                         </span>
                     @enderror
                 </div>
@@ -79,7 +78,6 @@
     </div>
 </div>
 @endsection
-
 @push('styles')
 <style>
 .auth-page {
@@ -100,7 +98,7 @@
 }
 
 .auth-card {
-    background: var(--color-yellow-bg);
+    background: #e0f2fe;
     border-radius: var(--border-radius);
     padding: 2rem;
     box-shadow: var(--shadow-md);
@@ -112,14 +110,14 @@
     font-family: var(--font-handwritten);
     font-size: 1.75rem;
     font-weight: 700;
-    color: var(--color-text);
+    color: #1e40af;
     margin-bottom: 1rem;
     text-align: center;
 }
 
 .auth-card p {
     font-family: var(--font-handwritten);
-    color: var(--color-text-light);
+    color: #1e40af;
     margin-bottom: 1.5rem;
     text-align: center;
 }
@@ -137,7 +135,7 @@
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: var(--color-text);
+    color: #1e40af;
     font-weight: 500;
 }
 
@@ -145,7 +143,7 @@
     width: 100%;
     padding: 0.75rem 1rem;
     border-radius: var(--border-radius);
-    border: 2px solid var(--color-border);
+    border: 2px solid #93c5fd;
     font-family: var(--font-handwritten);
     background-color: white;
     transition: all 0.3s ease;
@@ -153,13 +151,13 @@
 
 .form-control:focus {
     outline: none;
-    border-color: var(--color-secondary);
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .form-text {
     font-size: 0.875rem;
-    color: var(--color-text-light);
+    color: #1e40af;
     margin-top: 0.25rem;
 }
 
@@ -178,18 +176,18 @@
     height: 18px;
     margin-top: 0.25rem;
     cursor: pointer;
-    accent-color: var(--color-secondary);
+    accent-color: #3b82f6;
 }
 
 .checkbox-wrapper label {
     font-size: 0.9rem;
-    color: var(--color-text);
+    color: #1e40af;
     line-height: 1.4;
     cursor: pointer;
 }
 
 .checkbox-wrapper a {
-    color: var(--color-secondary);
+    color: #3b82f6;
     text-decoration: none;
     font-weight: 500;
 }
@@ -214,14 +212,14 @@
 }
 
 .btn-primary {
-    background-color: var(--color-secondary);
+    background-color: #3b82f6;
     color: white;
-    border: 2px dashed #d97706;
+    border: 2px dashed #2563eb;
 }
 
 .btn-primary:hover {
     transform: scale(1.05);
-    background-color: #d97706;
+    background-color: #2563eb;
 }
 
 .auth-links {
@@ -230,13 +228,13 @@
 }
 
 .auth-links a {
-    color: var(--color-secondary);
+    color: #3b82f6;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .auth-links a:hover {
-    color: #d97706;
+    color: #2563eb;
     text-decoration: underline;
 }
 

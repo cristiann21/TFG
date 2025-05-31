@@ -20,12 +20,23 @@ class Course extends Model
         'created_by',
         'language', // Nuevo campo para el lenguaje de programación
         'category_id', // Relación con categorías
-        'instructor_id'
+        'instructor_id',
+        'video_url',
+        'content'
+    ];
+
+    protected $casts = [
+        'content' => 'array'
     ];
 
     public function instructor()
     {
         return $this->belongsTo(User::class, 'instructor_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function users()
@@ -37,6 +48,11 @@ class Course extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function quiz()
+    {
+        return $this->hasOne(Quiz::class);
     }
 
     // Scope para búsqueda

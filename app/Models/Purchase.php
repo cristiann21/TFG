@@ -9,15 +9,21 @@ class Purchase extends Model
 {
     use HasFactory;
 
-    protected $table = 'compras';
+    protected $table = 'purchases';
 
     protected $fillable = [
         'user_id',
+        'course_id',
         'total',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
     }
 }

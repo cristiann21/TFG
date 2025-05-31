@@ -1,107 +1,127 @@
-@extends('layouts.app', ['title' => 'Planes de Suscripción - PinCode'])
+@extends('layouts.app')
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <div class="max-w-3xl mx-auto">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold mb-4">Planes de Suscripción</h1>
-            <p class="text-gray-600">Elige el plan que mejor se adapte a tus necesidades</p>
-        </div>
-
-        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
-                <strong class="font-bold">¡Éxito!</strong> {{ session('success') }}
+    <div class="max-w-7xl mx-auto">
+        <div class="postit-note blue-note p-6">
+            <!-- Encabezado -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold mb-4">
+                    <i class="fas fa-crown mr-2"></i>
+                    Elige tu plan
+                </h1>
+                <p class="text-gray-600">
+                    Al suscribirte a nuestro plan premium aceptas nuestros 
+                    <a href="#" class="text-blue-600 hover:underline">Términos y Condiciones</a>
+                </p>
             </div>
-        @endif
-        @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
-                <strong class="font-bold">Error:</strong> {{ session('error') }}
-            </div>
-        @endif
 
-        <div class="overflow-x-auto">
-            <table class="w-full bg-white rounded-lg shadow-lg text-center mb-8">
-                <thead>
-                    <tr class="bg-gray-100">
-                        <th class="py-4 px-2 text-lg font-bold"></th>
-                        <th class="py-4 px-2 text-lg font-bold">FREE</th>
-                        <th class="py-4 px-2 text-lg font-bold">PREMIUM</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-700">
-                    <tr>
-                        <td class="py-3 font-semibold">Límite de cursos</td>
-                        <td>3</td>
-                        <td>Ilimitado</td>
-                    </tr>
-                    <tr class="bg-gray-50">
-                        <td class="py-3 font-semibold">Contenido premium</td>
-                        <td><span class="text-red-500 text-xl">&#10006;</span></td>
-                        <td><span class="text-green-500 text-xl">&#10004;</span></td>
-                    </tr>
-                    <tr>
-                        <td class="py-3 font-semibold">Soporte prioritario</td>
-                        <td><span class="text-red-500 text-xl">&#10006;</span></td>
-                        <td><span class="text-green-500 text-xl">&#10004;</span></td>
-                    </tr>
-                    <tr class="bg-gray-50">
-                        <td class="py-3 font-semibold">Certificados</td>
-                        <td><span class="text-red-500 text-xl">&#10006;</span></td>
-                        <td><span class="text-green-500 text-xl">&#10004;</span></td>
-                    </tr>
-                    <tr>
-                        <td class="py-3 font-semibold">Acceso anticipado a cursos</td>
-                        <td><span class="text-red-500 text-xl">&#10006;</span></td>
-                        <td><span class="text-green-500 text-xl">&#10004;</span></td>
-                    </tr>
-                    <tr class="bg-gray-50">
-                        <td class="py-3 font-semibold">Soporte por email</td>
-                        <td><span class="text-green-500 text-xl">&#10004;</span></td>
-                        <td><span class="text-green-500 text-xl">&#10004;</span></td>
-                    </tr>
-                    <tr>
-                        <td class="py-3 font-semibold">Precio</td>
-                        <td>Gratis</td>
-                        <td>9,99 €/mes</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="flex flex-col md:flex-row justify-center items-center gap-6 mt-8">
-            <div class="flex-1 flex flex-col items-center">
-                @if($currentSubscription && $currentSubscription->plan_type === 'free')
-                    <button disabled class="bg-gray-400 text-white px-8 py-3 rounded-full font-semibold shadow-md opacity-80 cursor-not-allowed text-lg">
-                        Plan actual
-                    </button>
-                @elseif(!$currentSubscription)
-                    <form action="{{ route('subscriptions.subscribe') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="plan_type" value="free">
-                        <button type="submit" class="bg-yellow-400 hover:bg-yellow-500 text-white px-8 py-3 rounded-full font-semibold shadow-md text-lg transition-all">
-                            Activar Plan Free
-                        </button>
-                    </form>
-                @else
-                    <button disabled class="bg-gray-300 text-gray-500 px-8 py-3 rounded-full font-semibold shadow-md cursor-not-allowed text-lg">
-                        Ya tienes una suscripción activa
-                    </button>
-                @endif
-            </div>
-            <div class="flex-1 flex flex-col items-center">
-                @if(!$currentSubscription || ($currentSubscription && $currentSubscription->plan_type !== 'premium'))
-                    <form action="{{ route('subscriptions.subscribe') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="plan_type" value="premium">
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-semibold shadow-md text-lg transition-all">
-                            Suscribirse al Plan Premium
-                        </button>
-                    </form>
-                @else
-                    <button disabled class="bg-gray-400 text-white px-8 py-3 rounded-full font-semibold shadow-md opacity-80 cursor-not-allowed text-lg">
-                        Plan actual
-                    </button>
-                @endif
+            <!-- Tabla de Planes -->
+            <div class="overflow-x-auto rounded-lg shadow-lg">
+                <table class="w-full" border="1" text-align="center">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="p-4 text-center">Contenido</th>
+                            <th class="p-4 text-center">FREE</th>
+                            <th class="p-4 text-center bg-blue-50 relative">
+                                PREMIUM
+                                <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500"></div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b">
+                            <td class="p-4 font-medium">Cursos disponibles</td>
+                            <td class="p-4 text-center">3</td>
+                            <td class="p-4 text-center bg-blue-50">Ilimitados</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-4 font-medium">Contenido premium</td>
+                            <td class="p-4 text-center">
+                                <i class="fas fa-times text-red-500"></i>
+                            </td>
+                            <td class="p-4 text-center bg-blue-50">
+                                <i class="fas fa-check text-green-500"></i>
+                            </td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-4 font-medium">Soporte prioritario</td>
+                            <td class="p-4 text-center">
+                                <i class="fas fa-times text-red-500"></i>
+                            </td>
+                            <td class="p-4 text-center bg-blue-50">
+                                <i class="fas fa-check text-green-500"></i>
+                            </td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-4 font-medium">Certificados</td>
+                            <td class="p-4 text-center">
+                                <i class="fas fa-times text-red-500"></i>
+                            </td>
+                            <td class="p-4 text-center bg-blue-50">
+                                <i class="fas fa-check text-green-500"></i>
+                            </td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-4 font-medium">Acceso anticipado a cursos</td>
+                            <td class="p-4 text-center">
+                                <i class="fas fa-times text-red-500"></i>
+                            </td>
+                            <td class="p-4 text-center bg-blue-50">
+                                <i class="fas fa-check text-green-500"></i>
+                            </td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-4 font-medium">Soporte por email</td>
+                            <td class="p-4 text-center">
+                                <i class="fas fa-check text-green-500"></i>
+                            </td>
+                            <td class="p-4 text-center bg-blue-50">
+                                <i class="fas fa-check text-green-500"></i>
+                            </td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-4 font-medium">Precio</td>
+                            <td class="p-4 text-center font-bold">Gratis</td>
+                            <td class="p-4 text-center bg-blue-50 font-bold">9,99 €/mes</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4"></td>
+                            <td class="p-4 text-center">
+                                @if(!auth()->user()->hasActiveSubscription())
+                                    <button class="btn btn-secondary" disabled>
+                                        <i class="fas fa-check mr-2"></i>
+                                        Plan Actual
+                                    </button>
+                                @else
+                                    <form action="{{ route('subscriptions.downgrade') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-secondary">
+                                            <i class="fas fa-arrow-down mr-2"></i>
+                                            Cambiar a Free
+                                        </button>
+                                    </form>
+                                @endif
+                            </td>
+                            <td class="p-4 text-center bg-blue-50">
+                                @if(auth()->user()->hasActiveSubscription() && auth()->user()->subscriptions()->where('is_active', true)->first()->plan_type === 'premium')
+                                    <button class="btn btn-primary" disabled>
+                                        <i class="fas fa-check mr-2"></i>
+                                        Plan Actual
+                                    </button>
+                                @else
+                                    <form action="{{ route('subscriptions.upgrade') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-crown mr-2"></i>
+                                            Suscribirse al Premium
+                                        </button>
+                                    </form>
+                                @endif
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

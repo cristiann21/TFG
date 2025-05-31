@@ -28,7 +28,7 @@
         }
         .button {
             display: inline-block;
-            background-color: #2563eb;
+            background-color:rgb(180, 223, 252);
             color: white;
             padding: 12px 24px;
             text-decoration: none;
@@ -52,7 +52,6 @@
         <a href="{{ route('password.reset', ['token' => $token, 'email' => $email]) }}" class="button">
             Restablecer Contraseña
         </a>
-        <p>Este enlace expirará en 60 minutos por razones de seguridad.</p>
         <div class="footer">
             <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
             <p>&copy; {{ date('Y') }} PinCode. Todos los derechos reservados.</p>

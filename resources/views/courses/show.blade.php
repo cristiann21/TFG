@@ -70,7 +70,7 @@
                         </div>
                         <div class="course-image-container">
                             <div class="course-image">
-                                <img src="{{ $course->image ? asset($course->image) : asset('images/course1.png') }}" alt="{{ $course->title }}">
+                                <img src="{{ $course->image ? Storage::url($course->image) : asset('images/course1.png') }}" alt="{{ $course->title }}">
                                 <div class="pushpin red-pin"></div>
                             </div>
                         </div>
@@ -80,266 +80,298 @@
                 <!-- Contenido Principal -->
                 <div class="course-content-container">
                     <div class="course-main-content">
-                        <!-- Descripción del Curso -->
-                        <div class="content-section">
-                            <div class="postit-note blue-note">
-                                <h2>Descripción del Curso</h2>
-                                <div class="course-description">
-                                    <p>{{ $course->description }}</p>
-                                    <p>Este curso está diseñado para ayudarte a dominar {{ $course->language ?? 'este tema' }} de manera efectiva. Aprenderás desde los conceptos básicos hasta técnicas avanzadas que te permitirán desarrollar proyectos reales.</p>
-                                    <p>El contenido está estructurado de manera progresiva, permitiéndote construir sobre lo aprendido en cada lección. Incluye ejercicios prácticos, proyectos y evaluaciones para reforzar tu aprendizaje.</p>
-                                </div>
-                                <div class="note-corner"></div>
-                            </div>
-                        </div>
+                        @if(auth()->user() && auth()->user()->courses->contains($course->id))
+                            <!-- Contenido del Curso para Usuarios que lo han Comprado -->
+                            <div class="content-section">
+                                <div class="postit-note blue-note">
+                                    <h2>Contenido del Curso</h2>
+                                    @if($course->video_url)
+                                        <div class="video-container mb-6">
+                                            <iframe 
+                                                width="100%" 
+                                                height="400" 
+                                                src="{{ str_replace('youtu.be/', 'youtube.com/embed/', $course->video_url) }}" 
+                                                frameborder="0" 
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                allowfullscreen>
+                                            </iframe>
+                                        </div>
+                                    @endif
 
-                        <!-- Lo que aprenderás -->
-                        <div class="content-section">
-                            <div class="postit-note yellow-note">
-                                <h2>Lo que aprenderás</h2>
-                                <div class="learning-objectives">
-                                    <ul>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                            </svg>
-                                            <span>Dominar los fundamentos de {{ $course->language ?? 'la materia' }}</span>
-                                        </li>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                            </svg>
-                                            <span>Crear proyectos prácticos desde cero</span>
-                                        </li>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                            </svg>
-                                            <span>Implementar buenas prácticas y patrones de diseño</span>
-                                        </li>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                            </svg>
-                                            <span>Resolver problemas comunes en el desarrollo</span>
-                                        </li>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                            </svg>
-                                            <span>Optimizar el rendimiento de tus aplicaciones</span>
-                                        </li>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                            </svg>
-                                            <span>Prepararte para entrevistas técnicas</span>
-                                        </li>
-                                    </ul>
+                                    @if($course->quiz)
+                                        <div class="quiz-section mt-6">
+                                            <h3 class="text-xl font-bold mb-4">Test del Curso</h3>
+                                            <p class="mb-4">Completa el test para obtener tu certificado de finalización.</p>
+                                            <a href="{{ route('quizzes.show', ['course' => $course, 'quiz' => $course->quiz]) }}" class="btn btn-primary">
+                                                Realizar Test
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
-                                <div class="note-corner"></div>
                             </div>
-                        </div>
+                        @else
+                            <!-- Descripción del Curso -->
+                            <div class="content-section">
+                                <div class="postit-note blue-note">
+                                    <h2>Descripción del Curso</h2>
+                                    <div class="course-description">
+                                        <p>{{ $course->description }}</p>
+                                        <p>Este curso está diseñado para ayudarte a dominar {{ $course->language ?? 'este tema' }} de manera efectiva. Aprenderás desde los conceptos básicos hasta técnicas avanzadas que te permitirán desarrollar proyectos reales.</p>
+                                        <p>El contenido está estructurado de manera progresiva, permitiéndote construir sobre lo aprendido en cada lección. Incluye ejercicios prácticos, proyectos y evaluaciones para reforzar tu aprendizaje.</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <!-- Contenido del Curso -->
-                        <div class="content-section">
-                            <div class="postit-note green-note">
-                                <h2>Contenido del Curso</h2>
-                                <div class="course-curriculum">
-                                    <div class="curriculum-section">
-                                        <div class="section-header" data-toggle="section-1">
-                                            <h3>Módulo 1: Introducción a {{ $course->language ?? 'la materia' }}</h3>
-                                            <span class="toggle-icon">+</span>
-                                        </div>
-                                        <div class="section-content" id="section-1">
-                                            <ul>
-                                                <li>
-                                                    <div class="lesson-info">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <circle cx="12" cy="12" r="10"></circle>
-                                                            <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                        </svg>
-                                                        <span>Lección 1: Configuración del entorno</span>
-                                                    </div>
-                                                    <span class="lesson-duration">15:30</span>
-                                                </li>
-                                                <li>
-                                                    <div class="lesson-info">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <circle cx="12" cy="12" r="10"></circle>
-                                                            <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                        </svg>
-                                                        <span>Lección 2: Conceptos básicos</span>
-                                                    </div>
-                                                    <span class="lesson-duration">22:45</span>
-                                                </li>
-                                                <li>
-                                                    <div class="lesson-info">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                                            <polyline points="14 2 14 8 20 8"></polyline>
-                                                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                                                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                                                            <polyline points="10 9 9 9 8 9"></polyline>
-                                                        </svg>
-                                                        <span>Ejercicio: Primer proyecto</span>
-                                                    </div>
-                                                    <span class="lesson-duration">10:00</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="curriculum-section">
-                                        <div class="section-header" data-toggle="section-2">
-                                            <h3>Módulo 2: Fundamentos Avanzados</h3>
-                                            <span class="toggle-icon">+</span>
-                                        </div>
-                                        <div class="section-content" id="section-2">
-                                            <ul>
-                                                <li>
-                                                    <div class="lesson-info">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <circle cx="12" cy="12" r="10"></circle>
-                                                            <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                        </svg>
-                                                        <span>Lección 3: Estructuras de datos</span>
-                                                    </div>
-                                                    <span class="lesson-duration">28:15</span>
-                                                </li>
-                                                <li>
-                                                    <div class="lesson-info">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <circle cx="12" cy="12" r="10"></circle>
-                                                            <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                        </svg>
-                                                        <span>Lección 4: Algoritmos</span>
-                                                    </div>
-                                                    <span class="lesson-duration">32:20</span>
-                                                </li>
-                                                <li>
-                                                    <div class="lesson-info">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                                            <polyline points="14 2 14 8 20 8"></polyline>
-                                                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                                                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                                                            <polyline points="10 9 9 9 8 9"></polyline>
-                                                        </svg>
-                                                        <span>Ejercicio: Implementación práctica</span>
-                                                    </div>
-                                                    <span class="lesson-duration">15:45</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="curriculum-section">
-                                        <div class="section-header" data-toggle="section-3">
-                                            <h3>Módulo 3: Proyecto Final</h3>
-                                            <span class="toggle-icon">+</span>
-                                        </div>
-                                        <div class="section-content" id="section-3">
-                                            <ul>
-                                                <li>
-                                                    <div class="lesson-info">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <circle cx="12" cy="12" r="10"></circle>
-                                                            <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                        </svg>
-                                                        <span>Lección 5: Planificación del proyecto</span>
-                                                    </div>
-                                                    <span class="lesson-duration">20:10</span>
-                                                </li>
-                                                <li>
-                                                    <div class="lesson-info">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <circle cx="12" cy="12" r="10"></circle>
-                                                            <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                                                        </svg>
-                                                        <span>Lección 6: Implementación</span>
-                                                    </div>
-                                                    <span class="lesson-duration">45:30</span>
-                                                </li>
-                                                <li>
-                                                    <div class="lesson-info">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                                            <polyline points="14 2 14 8 20 8"></polyline>
-                                                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                                                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                                                            <polyline points="10 9 9 9 8 9"></polyline>
-                                                        </svg>
-                                                        <span>Proyecto Final: Entrega y evaluación</span>
-                                                    </div>
-                                                    <span class="lesson-duration">30:00</span>
-                                                </li>
-                                            </ul>
-                                        </div>
+                            <!-- Lo que aprenderás -->
+                            <div class="content-section">
+                                <div class="postit-note yellow-note">
+                                    <h2>Lo que aprenderás</h2>
+                                    <div class="learning-objectives">
+                                        <ul>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                <span>Dominar los fundamentos de {{ $course->language ?? 'la materia' }}</span>
+                                            </li>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                <span>Crear proyectos prácticos desde cero</span>
+                                            </li>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                <span>Implementar buenas prácticas y patrones de diseño</span>
+                                            </li>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                <span>Resolver problemas comunes en el desarrollo</span>
+                                            </li>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                <span>Optimizar el rendimiento de tus aplicaciones</span>
+                                            </li>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                                </svg>
+                                                <span>Prepararte para entrevistas técnicas</span>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
-                                <div class="note-corner"></div>
                             </div>
-                        </div>
 
-                        <!-- Requisitos -->
-                        <div class="content-section">
-                            <div class="postit-note pink-note">
-                                <h2>Requisitos</h2>
-                                <div class="requirements">
-                                    <ul>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                                            </svg>
-                                            <span>Conocimientos básicos de programación</span>
-                                        </li>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                                            </svg>
-                                            <span>Computadora con sistema operativo Windows, macOS o Linux</span>
-                                        </li>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                                            </svg>
-                                            <span>Conexión a Internet para descargar las herramientas necesarias</span>
-                                        </li>
-                                        <li>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                                            </svg>
-                                            <span>Ganas de aprender y practicar</span>
-                                        </li>
-                                    </ul>
+                            <!-- Contenido del Curso -->
+                            <div class="content-section">
+                                <div class="postit-note green-note">
+                                    <h2>Contenido del Curso</h2>
+                                    <div class="course-curriculum">
+                                        <div class="curriculum-section">
+                                            <div class="section-header" data-toggle="section-1">
+                                                <h3>Módulo 1: Introducción a {{ $course->language ?? 'la materia' }}</h3>
+                                                <span class="toggle-icon">+</span>
+                                            </div>
+                                            <div class="section-content" id="section-1">
+                                                <ul>
+                                                    <li>
+                                                        <div class="lesson-info">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                                                            </svg>
+                                                            <span>Lección 1: Configuración del entorno</span>
+                                                        </div>
+                                                        <span class="lesson-duration">15:30</span>
+                                                    </li>
+                                                    <li>
+                                                        <div class="lesson-info">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                                                            </svg>
+                                                            <span>Lección 2: Conceptos básicos</span>
+                                                        </div>
+                                                        <span class="lesson-duration">22:45</span>
+                                                    </li>
+                                                    <li>
+                                                        <div class="lesson-info">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                                                <polyline points="10 9 9 9 8 9"></polyline>
+                                                            </svg>
+                                                            <span>Ejercicio: Primer proyecto</span>
+                                                        </div>
+                                                        <span class="lesson-duration">10:00</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="curriculum-section">
+                                            <div class="section-header" data-toggle="section-2">
+                                                <h3>Módulo 2: Fundamentos Avanzados</h3>
+                                                <span class="toggle-icon">+</span>
+                                            </div>
+                                            <div class="section-content" id="section-2">
+                                                <ul>
+                                                    <li>
+                                                        <div class="lesson-info">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                                                            </svg>
+                                                            <span>Lección 3: Estructuras de datos</span>
+                                                        </div>
+                                                        <span class="lesson-duration">28:15</span>
+                                                    </li>
+                                                    <li>
+                                                        <div class="lesson-info">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                                                            </svg>
+                                                            <span>Lección 4: Algoritmos</span>
+                                                        </div>
+                                                        <span class="lesson-duration">32:20</span>
+                                                    </li>
+                                                    <li>
+                                                        <div class="lesson-info">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                                                <polyline points="10 9 9 9 8 9"></polyline>
+                                                            </svg>
+                                                            <span>Ejercicio: Implementación práctica</span>
+                                                        </div>
+                                                        <span class="lesson-duration">15:45</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="curriculum-section">
+                                            <div class="section-header" data-toggle="section-3">
+                                                <h3>Módulo 3: Proyecto Final</h3>
+                                                <span class="toggle-icon">+</span>
+                                            </div>
+                                            <div class="section-content" id="section-3">
+                                                <ul>
+                                                    <li>
+                                                        <div class="lesson-info">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                                                            </svg>
+                                                            <span>Lección 5: Planificación del proyecto</span>
+                                                        </div>
+                                                        <span class="lesson-duration">20:10</span>
+                                                    </li>
+                                                    <li>
+                                                        <div class="lesson-info">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <circle cx="12" cy="12" r="10"></circle>
+                                                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                                                            </svg>
+                                                            <span>Lección 6: Implementación</span>
+                                                        </div>
+                                                        <span class="lesson-duration">45:30</span>
+                                                    </li>
+                                                    <li>
+                                                        <div class="lesson-info">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                                                <polyline points="10 9 9 9 8 9"></polyline>
+                                                            </svg>
+                                                            <span>Proyecto Final: Entrega y evaluación</span>
+                                                        </div>
+                                                        <span class="lesson-duration">30:00</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="note-corner"></div>
                             </div>
-                        </div>
 
-                        <!-- Instructor -->
-                        <div class="content-section">
-                            <div class="postit-note purple-note">
-                                <h2>Sobre el Instructor</h2>
-                                <div class="instructor-info">
-                                    <div class="instructor-header">
-                                        <div class="instructor-avatar">
-                                            <img src="{{ asset('images/teacher-avatar.png') }}" alt="{{ optional($course->instructor)->name ?? 'Profesor' }}">
-                                        </div>
-                                        <div class="instructor-details">
-                                            <h3>{{ optional($course->instructor)->name ?? 'Profesor' }}</h3>
-                                            <p>Experto en {{ $course->language ?? 'Desarrollo' }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="instructor-bio">
-                                        <p>Instructor con más de 10 años de experiencia en el campo. Ha trabajado en proyectos para empresas de renombre y ha ayudado a miles de estudiantes a alcanzar sus metas profesionales.</p>
-                                        <p>Su enfoque práctico y su capacidad para explicar conceptos complejos de manera sencilla lo convierten en uno de los instructores mejor valorados de la plataforma.</p>
+                            <!-- Requisitos -->
+                            <div class="content-section">
+                                <div class="postit-note pink-note">
+                                    <h2>Requisitos</h2>
+                                    <div class="requirements">
+                                        <ul>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                                </svg>
+                                                <span>Conocimientos básicos de programación</span>
+                                            </li>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                                </svg>
+                                                <span>Computadora con sistema operativo Windows, macOS o Linux</span>
+                                            </li>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                                </svg>
+                                                <span>Conexión a Internet para descargar las herramientas necesarias</span>
+                                            </li>
+                                            <li>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                                </svg>
+                                                <span>Ganas de aprender y practicar</span>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
-                                <div class="note-corner"></div>
                             </div>
-                        </div>
+
+                            <!-- Instructor -->
+                            <div class="content-section">
+                                <div class="postit-note purple-note">
+                                    <h2>Sobre el Instructor</h2>
+                                    <div class="instructor-info">
+                                        <div class="instructor-header">
+                                            <div class="instructor-avatar">
+                                                @if($course->instructor && $course->instructor->avatar)
+                                                    <img src="{{ asset($course->instructor->avatar) }}" alt="{{ $course->instructor->name }}">
+                                                @else
+                                                    <div class="no-avatar">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="instructor-details">
+                                                <h3>{{ $course->instructor->name ?? 'Profesor' }}</h3>
+                                                <p>Experto en {{ $course->language ?? 'Desarrollo' }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="instructor-bio">
+                                            <p>Instructor con más de 10 años de experiencia en el campo. Ha trabajado en proyectos para empresas de renombre y ha ayudado a miles de estudiantes a alcanzar sus metas profesionales.</p>
+                                            <p>Su enfoque práctico y su capacidad para explicar conceptos complejos de manera sencilla lo convierten en uno de los instructores mejor valorados de la plataforma.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Sidebar -->
@@ -568,3 +600,89 @@
     });
 </script>
 @endsection
+
+@push('styles')
+<style>
+.instructor-info {
+    padding: 1rem;
+}
+
+.instructor-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.instructor-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--color-secondary);
+}
+
+.instructor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.instructor-avatar .no-avatar {
+    width: 100%;
+    height: 100%;
+    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 2.5rem;
+}
+
+.instructor-details h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+}
+
+.instructor-details p {
+    color: var(--color-text-light);
+    font-size: 1rem;
+}
+
+.instructor-bio {
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.instructor-bio p {
+    margin-bottom: 1rem;
+}
+
+.instructor-bio p:last-child {
+    margin-bottom: 0;
+}
+</style>
+@endpush
+
+@if(!auth()->user()->courses->contains($course))
+   
+@endif
+
+@if(auth()->user() && auth()->user()->id === $course->instructor_id)
+    <div class="mt-4">
+        @if(!$course->quiz)
+            <a href="{{ route('quizzes.create', $course) }}" class="btn btn-primary w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                Crear Test
+            </a>
+        @endif
+    </div>
+@endif

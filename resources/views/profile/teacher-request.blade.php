@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto">
-        <div class="postit-note yellow-note p-6">
+        <div class="postit-note blue-note p-6">
             <h1 class="text-2xl font-bold mb-6 text-center">
                 <i class="fas fa-chalkboard-teacher mr-2"></i>
                 Solicitud para ser Profesor
@@ -79,40 +79,36 @@
                         <label for="motivation" class="block text-sm font-medium text-gray-700 mb-2">
                             ¿Por qué quieres ser profesor?
                         </label>
+                        <br>
                         <textarea
                             id="motivation"
                             name="motivation"
                             rows="4"
                             class="form-control @error('motivation') is-invalid @enderror"
-                            placeholder="Cuéntanos por qué te gustaría ser profesor en nuestra plataforma..."
                             required
                         >{{ old('motivation') }}</textarea>
                         @error('motivation')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
-                        <p class="mt-1 text-sm text-gray-500">
-                            Sé específico sobre tus motivaciones y objetivos.
-                        </p>
+                     
                     </div>
 
                     <div>
                         <label for="experience" class="block text-sm font-medium text-gray-700 mb-2">
                             Experiencia y conocimientos
                         </label>
+                        <br>
                         <textarea
                             id="experience"
                             name="experience"
                             rows="4"
                             class="form-control @error('experience') is-invalid @enderror"
-                            placeholder="Describe tu experiencia en el área que te gustaría enseñar..."
                             required
                         >{{ old('experience') }}</textarea>
                         @error('experience')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
-                        <p class="mt-1 text-sm text-gray-500">
-                            Incluye tu experiencia, certificaciones y áreas de expertise.
-                        </p>
+                       
                     </div>
 
                     <div class="flex justify-end">

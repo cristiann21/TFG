@@ -50,15 +50,20 @@
                             @auth
                                 <a href="{{ route('profile.index') }}" class="text-gray-300 hover:text-white">{{ auth()->user()->name }}</a>
                                 <span class="text-gray-400">|</span>
+                                
                                 <a href="{{ route('cart.index') }}" class="text-gray-300 hover:text-white">
                                     Mi Carrito ({{ auth()->user()->cartItems()->count() }})
                                 </a>
-                                <form method="POST" action="{{ route('logout') }}" class="inline">
+                                <form action="{{ route('logout') }}" method="POST" class="inline">
                                     @csrf
-                                    <button type="submit" class="text-gray-300 hover:text-white">Cerrar Sesión</button>
+                                    <button type="submit" class="btn btn-danger">
+                                        
+                                        Cerrar Sesión
+                                    </button>
                                 </form>
                             @else
-                                <a href="{{ route('login') }}" class="text-gray-700 hover:text-gray-900">Iniciar Sesión</a>
+                            
+                                <a href="{{ route('login') }}" class="text-gray-700 hover:text-gray-900">Iniciar Sesión | </a>
                                 <a href="{{ route('register') }}" class="text-gray-700 hover:text-gray-900">Registrarse</a>
                             @endauth
                         </div>

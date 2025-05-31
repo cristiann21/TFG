@@ -1,6 +1,51 @@
 @extends('layouts.app')
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 @section('content')
+   
+    @push('styles')
+    <style>
+    .html-practice-btn-section {
+        width: 100vw;
+        background: #e3f6e3;
+        padding: 60px 0 0 0;
+        display: flex;
+        justify-content: center;
+    }
+    .html-practice-btn-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .postit-btn {
+        display: block;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 32px 0;
+        background:rgb(252, 217, 255);
+        color: #222;
+        font-size: 2rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 30px;
+        box-shadow: 2px 6px 18px #0002, 0 2px 0 rgb(208, 122, 230);
+        cursor: pointer;
+        transition: transform 0.1s, box-shadow 0.1s;
+        text-align: center;
+        margin-top: 16px;
+        margin-bottom: 32px;
+        letter-spacing: 1px;
+    }
+    .postit-btn:hover {
+        transform: scale(1.04) rotate(-2deg);
+        box-shadow: 4px 12px 24px #0003, 0 4px 0rgb(217, 122, 230);
+        background:rgb(253, 196, 255);
+    }
+    </style>
+    @endpush
     <!-- Hero Section - Paper Style -->
     <section class="hero">
         <div class="container">
@@ -52,6 +97,12 @@
         </div>
     </section>
 
+    <section class="stats grid-bg">
+        <div class="html-practice-btn-container">
+            <button class="postit-btn" onclick="window.location.href='{{ url('/practica-html') }}'">Practica HTML</button>
+        </div>
+    </section>
+    
     <!-- Features Section - Post-it Style -->
     <section class="features cork-bg">
         <div class="container">
@@ -59,10 +110,10 @@
                 <h2>¿Por qué elegirnos?</h2>
             </div>
 
-            <div class="features-grid">
+            <div class="features-grid"> 
                 <div class="postit-note yellow-note">
                     <div class="feature-icon">
-                        <img src="{{ asset('images/icon-flexible.png') }}" alt="Flexible">
+                    <i class="fa-solid fa-graduation-cap font-size-30"></i>
                     </div>
                     <h3>Aprendizaje Flexible</h3>
                     <p>Estudia a tu propio ritmo y desde cualquier lugar.</p>
@@ -70,7 +121,7 @@
 
                 <div class="postit-note blue-note">
                     <div class="feature-icon">
-                        <img src="{{ asset('images/icon-projects.png') }}" alt="Proyectos">
+                    <i class="fa-solid fa-keyboard fa-size-40"></i>
                     </div>
                     <h3>Proyectos Prácticos</h3>
                     <p>Aprende haciendo con proyectos del mundo real.</p>
@@ -78,10 +129,18 @@
 
                 <div class="postit-note green-note">
                     <div class="feature-icon">
-                        <img src="{{ asset('images/icon-community.png') }}" alt="Comunidad">
+                    <i class="fa-solid fa-user-group"></i>
                     </div>
                     <h3>Comunidad Activa</h3>
                     <p>Conecta con otros estudiantes y profesores.</p>
+                </div>
+
+                <div class="postit-note pink-note">
+                    <div class="feature-icon">
+                    <i class="fa-solid fa-handshake-angle"></i>
+                    </div>
+                    <h3>Soporte Personalizado</h3>
+                    <p>Recibe ayuda personalizada para superar tus desafíos.</p>
                 </div>
             </div>
         </div>
@@ -98,7 +157,7 @@
                 <div class="postit-note pink-note">
                     <div class="testimonial-header">
                         <div class="testimonial-image">
-                            <img src="{{ asset('images/student1.png') }}" alt="Estudiante">
+                            <img src="{{ asset('images/students/maria.png') }}" alt="Estudiante">
                         </div>
                         <div class="testimonial-info">
                             <h3>María García</h3>
@@ -113,7 +172,7 @@
                 <div class="postit-note purple-note">
                     <div class="testimonial-header">
                         <div class="testimonial-image">
-                            <img src="{{ asset('images/student2.png') }}" alt="Estudiante">
+                            <img src="{{ asset('images/students/carlos.png') }}" alt="Estudiante">
                         </div>
                         <div class="testimonial-info">
                             <h3>Carlos Rodríguez</h3>

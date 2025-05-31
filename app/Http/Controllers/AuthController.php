@@ -50,10 +50,10 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:3|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+            'password' => 'required|string|min:6|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
             'terms' => 'required|accepted',
         ], [
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
             'password.regex' => 'La contraseña debe contener al menos una letra mayúscula, una minúscula y un número.',
             'terms.required' => 'Debes aceptar los términos y condiciones.',
             'terms.accepted' => 'Debes aceptar los términos y condiciones.',

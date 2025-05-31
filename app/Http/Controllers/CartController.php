@@ -5,100 +5,120 @@ namespace App\Http\Controllers;
 use App\Models\CartItem;
 use App\Models\Course;
 use Illuminate\Http\Request;
-use Laravel\Cashier\Exceptions\IncompletePayment;
-use Stripe\Exception\CardException;
-use Stripe\Exception\InvalidRequestException;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
+use Illuminate\Support\Str;
 
 class CartController extends Controller
 {
     public function index()
     {
         $cartItems = auth()->user()->cartItems()->with('course')->get();
-        return view('cart.index', compact('cartItems'));
+        $total = $cartItems->sum(function($item) {
+            return $item->course->price;
+        });
+
+        return view('cart.index', compact('cartItems', 'total'));
     }
 
     public function add(Course $course)
     {
-        // Verificar si el curso ya está en el carrito
-        if (auth()->user()->cartItems()->where('course_id', $course->id)->exists()) {
-            return back()->with('error', 'Ya tienes este curso en tu carrito');
+        if (!auth()->user()->cartItems()->where('course_id', $course->id)->exists()) {
+            auth()->user()->cartItems()->create([
+                'course_id' => $course->id,
+                'price' => $course->price
+            ]);
         }
-
-        // Verificar si el usuario ya tiene el curso
-        if (auth()->user()->courses()->where('course_id', $course->id)->exists()) {
-            return back()->with('error', 'Ya tienes este curso en tu cuenta');
-        }
-
-        // Añadir al carrito
-        auth()->user()->cartItems()->create([
-            'course_id' => $course->id,
-            'price' => $course->price
-        ]);
 
         return back()->with('success', 'Curso añadido al carrito');
     }
 
     public function remove(CartItem $cartItem)
     {
-        if ($cartItem->user_id !== auth()->id()) {
-            return back()->with('error', 'No tienes permiso para realizar esta acción');
+        if ($cartItem->user_id === auth()->id()) {
+            $cartItem->delete();
         }
 
-        $cartItem->delete();
         return back()->with('success', 'Curso eliminado del carrito');
     }
 
     public function checkout()
     {
         $cartItems = auth()->user()->cartItems()->with('course')->get();
-
+        
         if ($cartItems->isEmpty()) {
-            return back()->with('error', 'Tu carrito está vacío');
+            return back()->with('error', 'El carrito está vacío');
         }
 
-        $total = $cartItems->sum('price');
-
         try {
-            // Crear el pago en Stripe
-            $payment = auth()->user()->charge($total * 100, [
-                'description' => 'Compra de cursos en PinCode',
+            Stripe::setApiKey(config('services.stripe.secret'));
+
+            $lineItems = $cartItems->map(function($item) {
+                $priceWithVAT = $item->course->price * 1.21; // Añadir 21% IVA
+                return [
+                    'price_data' => [
+                        'currency' => 'eur',
+                        'product_data' => [
+                            'name' => $item->course->title,
+                            'description' => Str::limit($item->course->description, 100),
+                        ],
+                        'unit_amount' => (int)($priceWithVAT * 100), // Convertir a centavos
+                    ],
+                    'quantity' => 1,
+                ];
+            })->toArray();
+
+            $session = Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => $lineItems,
+                'mode' => 'payment',
+                'success_url' => route('cart.success'),
+                'cancel_url' => route('cart.cancel'),
                 'metadata' => [
-                    'courses' => $cartItems->pluck('course.title')->join(', '),
-                    'user_id' => auth()->id(),
-                    'user_email' => auth()->user()->email
-                ],
-                'receipt_email' => auth()->user()->email,
-                'currency' => 'eur'
+                    'user_id' => auth()->id()
+                ]
             ]);
 
-            // Si el pago es exitoso, añadir los cursos al usuario
+            return redirect($session->url);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al procesar el pago: ' . $e->getMessage());
+        }
+    }
+
+    public function success()
+    {
+        try {
+            $cartItems = auth()->user()->cartItems()->with('course')->get();
+            
+            // Añadir los cursos al usuario
             foreach ($cartItems as $item) {
                 auth()->user()->courses()->attach($item->course_id);
+                
+                // Crear registro de compra
+                auth()->user()->purchases()->create([
+                    'total' => $item->course->price
+                ]);
             }
 
             // Limpiar el carrito
             auth()->user()->cartItems()->delete();
 
-            return redirect()->route('profile.courses')
+            return redirect()->route('courses.index')
                 ->with('success', '¡Compra realizada con éxito! Ya puedes acceder a tus cursos.');
-
-        } catch (IncompletePayment $exception) {
-            return redirect()->route('cashier.payment', [
-                $exception->payment->id, 
-                'redirect' => route('profile.courses')
-            ]);
-        } catch (CardException $e) {
-            return back()->with('error', 'Error con la tarjeta: ' . $e->getMessage());
-        } catch (InvalidRequestException $e) {
-            return back()->with('error', 'Error en la solicitud de pago: ' . $e->getMessage());
         } catch (\Exception $e) {
-            return back()->with('error', 'Hubo un error al procesar el pago. Por favor, inténtalo de nuevo.');
+            return back()->with('error', 'Error al procesar la compra: ' . $e->getMessage());
         }
+    }
+
+    public function cancel()
+    {
+        return redirect()->route('cart.index')
+            ->with('error', 'Pago cancelado');
     }
 
     public function clear()
     {
         auth()->user()->cartItems()->delete();
-        return back()->with('success', 'Carrito vaciado correctamente');
+        return back()->with('success', 'Carrito vaciado');
     }
 } 

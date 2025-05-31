@@ -26,7 +26,22 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048']
         ]);
+
+        // Si el usuario es profesor y ha subido una nueva foto
+        if ($user->isTeacher() && $request->hasFile('avatar')) {
+            // Eliminar la foto anterior si existe
+            if ($user->avatar && file_exists(public_path($user->avatar))) {
+                unlink(public_path($user->avatar));
+            }
+
+            // Guardar la nueva foto
+            $avatar = $request->file('avatar');
+            $avatarName = time() . '.' . $avatar->getClientOriginalExtension();
+            $avatar->move(public_path('images/avatars'), $avatarName);
+            $validated['avatar'] = 'images/avatars/' . $avatarName;
+        }
 
         $user->update($validated);
 
@@ -39,16 +54,31 @@ class ProfileController extends Controller
         
         if ($user->isTeacher()) {
             // Si es profesor, mostrar cursos creados
-            $courses = Course::where('created_by', $user->id)
+            $courses = Course::where('instructor_id', $user->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
             return view('profile.courses', compact('courses'));
         } else {
-            // Si es estudiante, mostrar cursos adquiridos
-            $courses = $user->courses()
-                ->orderBy('created_at', 'desc')
-                ->get();
-            return view('profile.enrolled-courses', compact('courses'));
+            // Si es estudiante, redirigir a cursos adquiridos
+            return redirect()->route('profile.enrolled-courses');
         }
+    }
+
+    public function enrolledCourses()
+    {
+        $user = auth()->user();
+        
+        // Obtener solo los cursos que el usuario ha comprado
+        $courses = Course::whereHas('users', function($query) use ($user) {
+            $query->where('users.id', $user->id);
+        })
+        ->where(function($query) use ($user) {
+            $query->where('instructor_id', '!=', $user->id)
+                  ->where('created_by', '!=', $user->id);
+        })
+        ->orderBy('created_at', 'desc')
+        ->get();
+        
+        return view('profile.enrolled-courses', compact('courses'));
     }
 } 

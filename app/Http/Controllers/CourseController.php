@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Category;
+use App\Models\Quiz;
+use App\Models\QuizQuestion;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
@@ -136,10 +138,6 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
-        if (!auth()->check() || auth()->user()->role !== 'teacher') {
-            abort(403, 'No tienes permiso para acceder a esta página.');
-        }
-
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
@@ -147,23 +145,58 @@ class CourseController extends Controller
             'level' => 'required|in:Principiante,Intermedio,Avanzado',
             'language' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'video_url' => 'nullable|url',
+            'questions' => 'nullable|array',
+            'questions.*.question_text' => 'required|string',
+            'questions.*.option_a' => 'required|string',
+            'questions.*.option_b' => 'required|string',
+            'questions.*.option_c' => 'required|string',
+            'questions.*.option_d' => 'required|string',
+            'questions.*.correct_option' => 'required|in:a,b,c,d'
         ]);
 
-        $data = $request->all();
-        $data['created_by'] = auth()->id();
+        $imagePath = $request->file('image')->store('courses', 'public');
 
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/courses'), $imageName);
-            $data['image'] = 'images/courses/' . $imageName;
+        $course = Course::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'price' => $request->price,
+            'level' => $request->level,
+            'language' => $request->language,
+            'category_id' => $request->category_id,
+            'image' => $imagePath,
+            'video_url' => $request->video_url,
+            'instructor_id' => auth()->id(),
+            'created_by' => auth()->id()
+        ]);
+
+        // Crear el test si hay preguntas
+        if ($request->has('questions') && !empty($request->questions)) {
+            $quiz = Quiz::create([
+                'course_id' => $course->id,
+                'title' => 'Test de ' . $course->title,
+                'description' => 'Test de evaluación para el curso ' . $course->title,
+                'passing_score' => 70
+            ]);
+
+            foreach ($request->questions as $questionData) {
+                QuizQuestion::create([
+                    'quiz_id' => $quiz->id,
+                    'question' => $questionData['question_text'],
+                    'options' => json_encode([
+                        $questionData['option_a'],
+                        $questionData['option_b'],
+                        $questionData['option_c'],
+                        $questionData['option_d']
+                    ]),
+                    'correct_option' => array_search($questionData['correct_option'], ['a', 'b', 'c', 'd'])
+                ]);
+            }
         }
 
-        Course::create($data);
-
-        return redirect()->route('courses.index')
-            ->with('success', 'Curso creado exitosamente.');
+        return redirect()->route('courses.show', $course)
+            ->with('success', 'Curso creado exitosamente');
     }
 
     public function edit(Course $course)

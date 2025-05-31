@@ -3,7 +3,7 @@
 @section('content')
 <div class="auth-page">
     <div class="auth-container">
-        <div class="postit-note yellow-note auth-card">
+        <div class="postit-note auth-card">
             <h2>Restablecer Contraseña</h2>
             <p>Ingresa tu nueva contraseña para continuar</p>
             
@@ -16,7 +16,7 @@
                     <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ $email ?? old('email') }}" required autofocus>
                     @error('email')
                         <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                            <strong>El correo electrónico no está registrado</strong>
                         </span>
                     @enderror
                 </div>
@@ -26,7 +26,7 @@
                     <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
                     @error('password')
                         <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
+                            <strong>La contraseña debe tener al menos 6 caracteres</strong>
                         </span>
                     @enderror
                 </div>
