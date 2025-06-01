@@ -23,14 +23,25 @@ class CartController extends Controller
 
     public function add(Course $course)
     {
-        if (!auth()->user()->cartItems()->where('course_id', $course->id)->exists()) {
-            auth()->user()->cartItems()->create([
-                'course_id' => $course->id,
-                'price' => $course->price
-            ]);
+        $user = auth()->user();
+
+        // Verificar si el curso ya está en el carrito
+        if ($user->cartItems()->where('course_id', $course->id)->exists()) {
+            return back()->with('error', 'Este curso ya está en tu carrito.');
         }
 
-        return back()->with('success', 'Curso añadido al carrito');
+        // Verificar si el usuario ya tiene el curso
+        if ($user->courses()->where('course_id', $course->id)->exists()) {
+            return back()->with('error', 'Ya tienes este curso en tu cuenta.');
+        }
+
+        // Añadir el curso al carrito
+        $user->cartItems()->create([
+            'course_id' => $course->id,
+            'price' => $course->price
+        ]);
+
+        return back();
     }
 
     public function remove(CartItem $cartItem)
@@ -104,7 +115,8 @@ class CartController extends Controller
             auth()->user()->cartItems()->delete();
 
             return redirect()->route('courses.index')
-                ->with('success', '¡Compra realizada con éxito! Ya puedes acceder a tus cursos.');
+                ->with('success', '¡Compra realizada con éxito!')
+                ->with('show_enrolled_courses_link', true);
         } catch (\Exception $e) {
             return back()->with('error', 'Error al procesar la compra: ' . $e->getMessage());
         }

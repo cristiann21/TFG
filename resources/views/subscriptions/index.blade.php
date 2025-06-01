@@ -31,7 +31,7 @@
                             <span class="text-red-500">✗</span> Sin acceso a cursos
                         </td>
                         <td class="border-2 border-gray-300 p-4 text-center">
-                            <span class="text-green-500">✓</span> 3 cursos
+                            <span class="text-green-500">✓</span> 5 cursos
                         </td>
                         <td class="border-2 border-gray-300 p-4 text-center">
                             <span class="text-green-500">✓</span> 25 cursos
@@ -77,21 +77,21 @@
                         <td class="border-2 border-gray-300 p-4">Acción</td>
                         <td class="border-2 border-gray-300 p-4 text-center">
                             @if($currentSubscription && $currentSubscription->plan_type === 'free')
-                                <button class="w-full py-2 px-4 bg-blue-500 text-white rounded cursor-not-allowed" disabled>Plan Actual</button>
+                                <button class="btn btn-orange w-full cursor-not-allowed" disabled>Plan Actual</button>
                             @else
                                 <a href="{{ route('subscriptions.checkout', 'free') }}" class="btn btn-primary w-full">Cambiar a Free</a>
                             @endif
                         </td>
                         <td class="border-2 border-gray-300 p-4 text-center">
                             @if($currentSubscription && $currentSubscription->plan_type === 'trial')
-                                <button class="w-full py-2 px-4 bg-blue-500 text-white rounded cursor-not-allowed" disabled>Plan Actual</button>
+                                <button class="btn btn-orange w-full cursor-not-allowed" disabled>Plan Actual</button>
                             @else
                                 <a href="{{ route('subscriptions.checkout', 'trial') }}" class="btn btn-primary w-full">Probar Ahora</a>
                             @endif
                         </td>
                         <td class="border-2 border-gray-300 p-4 text-center">
                             @if($currentSubscription && $currentSubscription->plan_type === 'premium')
-                                <button class="w-full py-2 px-4 bg-blue-500 text-white rounded cursor-not-allowed" disabled>Plan Actual</button>
+                                <button class="btn btn-orange w-full cursor-not-allowed" disabled>Plan Actual</button>
                             @else
                                 <a href="{{ route('subscriptions.checkout', 'premium') }}" class="btn btn-primary w-full">Suscribirse Ahora</a>
                             @endif
@@ -121,4 +121,45 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection
+
+@push('styles')
+<style>
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    min-width: 150px;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-orange {
+    background-color: #f97316;
+    color: white;
+    border: none;
+}
+
+.btn-orange:hover {
+    background-color: #ea580c;
+}
+
+.btn-orange:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+</style>
+@endpush 

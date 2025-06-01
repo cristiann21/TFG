@@ -118,4 +118,39 @@
     .courses-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Estilos para notas de error */
+.postit-note.red-note {
+    background-color: #ffebee;
+    border: 2px solid #ef5350;
+    color: #c62828;
+    box-shadow: 0 4px 6px rgba(239, 83, 80, 0.1);
+}
+
+.postit-note.red-note .note-corner {
+    border-color: transparent #ef5350 #ef5350 transparent;
+}
+
+.btn-red {
+    background-color: #ef5350;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-red:hover {
+    background-color: #e53935;
+    transform: translateY(-1px);
+}
+
+.btn-red .btn-icon {
+    width: 1.25rem;
+    height: 1.25rem;
 } 

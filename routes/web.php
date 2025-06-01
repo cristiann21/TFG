@@ -91,7 +91,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/subscriptions', 'index')->name('subscriptions.index');
         Route::get('/subscriptions/checkout/{plan}', 'checkout')->name('subscriptions.checkout');
         Route::post('/subscriptions/process', 'process')->name('subscriptions.process');
-        Route::post('/subscriptions/cancel', 'cancel')->name('subscriptions.cancel');
+        Route::match(['get', 'post'], '/subscriptions/cancel', 'cancel')->name('subscriptions.cancel');
     });
     
     Route::get('/teacher-request', [TeacherRequestController::class, 'show'])->name('teacher-request.show');

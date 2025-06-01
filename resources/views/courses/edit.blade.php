@@ -142,7 +142,7 @@
                                         </div>
                                         <div class="flex space-x-2">
                                             <a href="{{ route('quizzes.edit', ['course' => $course, 'quiz' => $quiz]) }}" 
-                                               class="btn btn-secondary btn-sm">
+                                               class="btn btn-primary btn-sm">
                                                 <i class="fas fa-edit mr-1"></i>
                                                 Editar
                                             </a>

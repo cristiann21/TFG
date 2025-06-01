@@ -82,19 +82,31 @@
             <ul>
                 <li><a href="{{ route('home') }}">Inicio</a></li>
                 <li><a href="{{ route('courses.index') }}">Cursos</a></li>
+                @if(auth()->check() && auth()->user()->isTeacher())
+                    <li><a href="{{ route('courses.create') }}">Añadir Curso</a></li>
+                @endif
+                <li><a href="{{ route('subscriptions.index') }}">
+                    @if(auth()->check() && auth()->user()->hasActiveSubscription())
+                        <span class="text-green-400">Suscripción Activa</span>
+                    @else
+                        Suscripciones
+                    @endif
+                </a></li>
                 <li><a href="{{ route('about') }}">Nosotros</a></li>
                 <li><a href="{{ route('contact') }}">Contacto</a></li>
-                @guest
-                    <li><a href="{{ route('login') }}">Iniciar Sesión</a></li>
-                    <li><a href="{{ route('register') }}">Registrarse</a></li>
-                @else
+                @auth
+                    <li><a href="{{ route('profile.index') }}">Mi Perfil</a></li>
+                    <li><a href="{{ route('cart.index') }}">Mi Carrito ({{ auth()->user()->cartItems()->count() }})</a></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit">Cerrar Sesión</button>
                         </form>
                     </li>
-                @endguest
+                @else
+                    <li><a href="{{ route('login') }}">Iniciar Sesión</a></li>
+                    <li><a href="{{ route('register') }}">Registrarse</a></li>
+                @endauth
             </ul>
         </nav>
     @endif

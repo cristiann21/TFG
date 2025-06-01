@@ -65,7 +65,7 @@
                                     @endforeach
                                 </div>
 
-                                <div>
+                                <div class="mb-4">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Respuesta Correcta</label>
                                     <select name="questions[{{ $index }}][correct_option]" 
                                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
@@ -95,14 +95,15 @@
                     <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Guardar Cambios
                     </button>
-                    <form action="{{ route('quizzes.destroy', ['course' => $course, 'quiz' => $quiz]) }}" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="return confirm('¿Estás seguro de que deseas eliminar este test? Esta acción no se puede deshacer.')">
-                            Eliminar Test
-                        </button>
-                    </form>
                 </div>
+            </form>
+
+            <form action="{{ route('quizzes.destroy', ['course' => $course, 'quiz' => $quiz]) }}" method="POST" class="mt-4">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" onclick="return confirm('¿Estás seguro de que deseas eliminar este test? Esta acción no se puede deshacer.')">
+                    Eliminar Test
+                </button>
             </form>
         </div>
     </div>

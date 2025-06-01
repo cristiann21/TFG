@@ -3,6 +3,31 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto">
+        @if(session('success'))
+            <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                <div class="flex flex-col">
+                    <p class="font-bold mb-2">{{ session('success') }}</p>
+                    @if(session('show_enrolled_courses_link'))
+                        <p class="mb-2">Puedes acceder a este curso desde tus cursos adquiridos.</p>
+                        <a href="{{ route('profile.enrolled-courses') }}" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                            Ver Mis Cursos Adquiridos
+                        </a>
+                    @endif
+                </div>
+            </div>
+        @endif
+
+        @if(session('cart_success'))
+            <div class="mb-4 p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded">
+                <div class="flex flex-col">
+                    <p class="font-bold mb-2">{{ session('cart_success') }}</p>
+                    <a href="{{ route('cart.index') }}" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Ver Carrito
+                    </a>
+                </div>
+            </div>
+        @endif
+
         @if(session('error'))
             <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
                 {{ session('error') }}
@@ -55,7 +80,7 @@
                         </div>
                         <div class="course-image-container flex-shrink-0">
                             <div class="course-image relative">
-                                <img src="{{ $course->image ? asset('storage/' . $course->image) : asset('images/course1.png') }}" 
+                                <img src="{{ $course->image ? asset($course->image) : asset('images/course1.png') }}" 
                                      alt="{{ $course->title }}"
                                      class="w-64 h-48 object-cover rounded-lg shadow-md">
                                 <div class="pushpin red-pin absolute -top-2 -right-2"></div>
@@ -368,19 +393,20 @@
                                         <!-- Acciones para el creador del curso -->
                                         <div class="space-y-4">
                                             @if(auth()->user()->favorites()->where('course_id', $course->id)->exists())
-                                                <form action="{{ route('courses.favorites.remove', $course->id) }}" method="POST" class="inline">
+                                                <form action="{{ route('courses.favorites.remove', ['course' => $course->id]) }}" method="POST" class="mt-2">
                                                     @csrf
-                                                    <button type="submit" class="btn btn-outline btn-block">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-outline-danger btn-block">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
                                                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                                                         </svg>
                                                         Quitar de Favoritos
                                                     </button>
                                                 </form>
                                             @else
-                                                <form action="{{ route('courses.favorites.add', $course->id) }}" method="POST" class="inline">
+                                                <form action="{{ route('courses.favorites.add', ['course' => $course->id]) }}" method="POST" class="mt-2">
                                                     @csrf
-                                                    <button type="submit" class="btn btn-outline btn-block">
+                                                    <button type="submit" class="btn btn-outline-danger btn-block">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
                                                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                                                         </svg>
@@ -399,9 +425,17 @@
                                         </div>
                                     @else
                                         <!-- Acciones para otros usuarios -->
-                                        @if(auth()->user()->subscriptions()->where('is_active', true)->first()?->plan_type === 'free')
+                                        @if(auth()->user()->courses()->where('course_id', $course->id)->exists())
+                                            <button disabled class="btn btn-secondary btn-block cursor-not-allowed">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                                </svg>
+                                                Ya tienes este curso
+                                            </button>
+                                        @elseif(auth()->user()->subscriptions()->where('is_active', true)->first()?->plan_type === 'free')
                                             <div class="text-center">
-                                                <p class="text-gray-600 mb-4">¡Suscríbete para acceder a este curso!</p>
+                                                <p class="text-gray-600 mb-4">¡Suscríbete o compra este curso para acceder a todo su contenido!</p>
                                                 <a href="{{ route('subscriptions.index') }}" class="btn btn-primary btn-block">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
                                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -418,11 +452,6 @@
                                             <p class="mt-2">Cursos restantes: {{ auth()->user()->getRemainingCourses() }}</p>
                                         @endif
                                         @if(!auth()->user()->courses()->where('course_id', $course->id)->exists())
-                                            @if(session('success') && (session('success') === 'Curso añadido a favoritos' || session('success') === 'Curso eliminado de favoritos'))
-                                                <div class="mb-2 text-green-600 text-sm">
-                                                    {{ session('success') }}
-                                                </div>
-                                            @endif
                                             @if(auth()->user()->cartItems()->where('course_id', $course->id)->exists())
                                                 <button disabled class="btn btn-secondary btn-block cursor-not-allowed">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
@@ -448,17 +477,18 @@
 
                                             <!-- Botón de Añadir a Favoritos -->
                                             @if(auth()->user()->favorites()->where('course_id', $course->id)->exists())
-                                                <form action="{{ route('courses.favorites.remove', $course->id) }}" method="POST" class="mt-2">
+                                                <form action="{{ route('courses.favorites.remove', ['course' => $course->id]) }}" method="POST" class="mt-2">
                                                     @csrf
+                                                    @method('DELETE')
                                                     <button type="submit" class="btn btn-outline-danger btn-block">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
                                                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                                                         </svg>
                                                         Quitar de Favoritos
                                                     </button>
                                                 </form>
                                             @else
-                                                <form action="{{ route('courses.favorites.add', $course->id) }}" method="POST" class="mt-2">
+                                                <form action="{{ route('courses.favorites.add', ['course' => $course->id]) }}" method="POST" class="mt-2">
                                                     @csrf
                                                     <button type="submit" class="btn btn-outline-danger btn-block">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
@@ -468,14 +498,6 @@
                                                     </button>
                                                 </form>
                                             @endif
-                                        @else
-                                            <button disabled class="btn btn-secondary btn-block cursor-not-allowed">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
-                                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                                </svg>
-                                                Ya tienes este curso
-                                            </button>
                                         @endif
                                     @endif
                                 @else

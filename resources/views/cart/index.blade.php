@@ -30,20 +30,17 @@
                 </a>
             @else
                 <div class="space-y-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">Mi Carrito</h2>
-                        <form action="{{ route('cart.clear') }}" method="POST">
-                            @csrf
-                          
-                        </form>
-                    </div>
-
                     @foreach($cartItems as $item)
                         <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
-                            <div>
-                                <h3 class="font-medium">{{ $item->course->title }}</h3>
-                                <p class="text-sm text-gray-600">{{ optional($item->course->instructor)->name ?? 'Profesor' }}</p>
-                                <p class="text-sm font-medium">{{ number_format($item->price, 2) }} €</p>
+                            <div class="flex items-center space-x-4">
+                                <img src="{{ $item->course->image ? asset($item->course->image) : asset('images/course1.png') }}" 
+                                     alt="{{ $item->course->title }}"
+                                     class="w-20 h-20 object-cover rounded-lg">
+                                <div>
+                                    <h3 class="font-medium">{{ $item->course->title }}</h3>
+                                    <p class="text-sm text-gray-600">{{ optional($item->course->instructor)->name ?? 'Profesor' }}</p>
+                                    <p class="text-sm font-medium">{{ number_format($item->price, 2) }} €</p>
+                                </div>
                             </div>
                             <form action="{{ route('cart.remove', $item) }}" method="POST">
                                 @csrf

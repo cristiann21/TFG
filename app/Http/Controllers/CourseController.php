@@ -126,11 +126,12 @@ class CourseController extends Controller
         }
 
         // Verificar límite de cursos según el plan
-        $maxCourses = $subscription->plan_type === 'trial' ? 3 : 25;
+        $maxCourses = $subscription->plan_type === 'trial' ? 5 : 25;
         $currentCourses = $user->courses()->count();
         
         if ($currentCourses >= $maxCourses) {
-            return back()->with('error', 'Has alcanzado el límite de cursos para tu plan actual.');
+            return back()->with('error', 'Has alcanzado el límite de 5 cursos para tu plan de prueba. ¡Actualiza tu suscripción para obtener más cursos!')
+                        ->with('show_subscription_button', true);
         }
 
         try {
@@ -139,45 +140,14 @@ class CourseController extends Controller
             // Añadir el curso al usuario
             $user->courses()->attach($course->id);
 
-            // Recargar el curso con sus tests y preguntas
-            $course = Course::with(['quizzes' => function($query) {
-                $query->with(['questions' => function($query) {
-                    $query->orderBy('id');
-                }]);
-            }])->find($course->id);
-
-            // Debug: Verificar si hay tests
-            \Log::info('Tests del curso:', [
-                'course_id' => $course->id,
-                'quizzes_count' => $course->quizzes->count(),
-                'quizzes' => $course->quizzes->toArray()
-            ]);
-
-            // Obtener cursos relacionados
-            $relatedCourses = Course::where('id', '!=', $course->id)
-                ->where(function($query) use ($course) {
-                    $query->where('language', $course->language)
-                          ->orWhere('category_id', $course->category_id);
-                })
-                ->take(3)
-                ->get();
-
             DB::commit();
 
-            // Asegurarse de que los tests estén disponibles
-            if ($course->quizzes->isEmpty()) {
-                // Intentar cargar los tests directamente
-                $quizzes = Quiz::where('course_id', $course->id)
-                    ->with(['questions' => function($query) {
-                        $query->orderBy('id');
-                    }])
-                    ->get();
-                
-                $course->setRelation('quizzes', $quizzes);
-            }
+            // Redirigir con mensaje de éxito
+            return redirect()
+                ->route('courses.index')
+                ->with('success', '¡Curso obtenido correctamente!')
+                ->with('show_enrolled_courses_link', true);
 
-            return view('courses.show', compact('course', 'relatedCourses'))
-                ->with('success', '¡Curso añadido a tu cuenta!');
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Error al obtener el curso: ' . $e->getMessage());
@@ -187,14 +157,32 @@ class CourseController extends Controller
 
     public function addToFavorites(Course $course)
     {
-        auth()->user()->favorites()->attach($course->id);
-        return back()->with('success', 'Curso añadido a favoritos');
+        // Verificar si el curso ya está en favoritos
+        if (!auth()->user()->favorites()->where('course_id', $course->id)->exists()) {
+            auth()->user()->favorites()->attach($course->id);
+        }
+        return back();
     }
 
     public function removeFromFavorites(Course $course)
     {
-        auth()->user()->favorites()->detach($course->id);
-        return back()->with('success', 'Curso eliminado de favoritos');
+        try {
+            DB::beginTransaction();
+            
+            // Verificar si el curso está en favoritos antes de quitarlo
+            if (auth()->user()->favorites()->where('course_id', $course->id)->exists()) {
+                auth()->user()->favorites()->detach($course->id);
+                DB::commit();
+                return redirect()->back()->with('success', 'Curso quitado de favoritos');
+            }
+            
+            DB::commit();
+            return redirect()->back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error al quitar de favoritos: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al quitar de favoritos');
+        }
     }
 
     public function create()

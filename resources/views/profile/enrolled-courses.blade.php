@@ -1,44 +1,48 @@
 @extends('layouts.app', ['title' => 'Mis Cursos Adquiridos - PinCode'])
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-4">
     <div class="max-w-7xl mx-auto">
-        <div class="postit-note blue-note p-6">
-            <div class="flex justify-between items-center mb-6">
+        <div class="postit-note blue-note p-6 mt-2">
+            <div class="flex justify-between items-center mb-4">
                 <h1 class="text-2xl font-bold">Mis Cursos Adquiridos</h1>
             </div>
 
             @if($courses->isEmpty())
-                <div class="postit-note yellow-note p-6 text-center">
-                    <h3 class="text-xl font-bold mb-4">No has adquirido ningún curso todavía</h3>
+                <div class="text-center py-6">
+                    <h3 class="text-xl font-bold mb-3">No has adquirido ningún curso todavía</h3>
                     <p class="text-gray-600 mb-4">¡Explora nuestra plataforma y encuentra el curso perfecto para ti!</p>
                     <a href="{{ route('courses.index') }}" class="btn btn-blue">
                         Explorar Cursos
                     </a>
-                    <div class="note-corner"></div>
                 </div>
             @else
-                <div class="courses-grid">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($courses as $course)
-                        <div class="course-card {{ ['yellow-note', 'blue-note', 'green-note', 'pink-note', 'purple-note'][($loop->index % 5)] }}">
-                            <div class="course-image">
-                                <img src="{{ $course->image ? asset($course->image) : asset('images/course'.($loop->index % 3 + 1).'.png') }}" alt="{{ $course->title }}">
-                                <span class="course-language">{{ $course->language ?? 'General' }}</span>
-                                <span class="course-level">{{ $course->level }}</span>
-                            </div>
-                            <div class="course-content">
-                                <h3>{{ $course->title }}</h3>
-                                <p>{{ Str::limit($course->description, 100) }}</p>
-                                <div class="course-meta">
-                                    <span class="course-category">{{ optional($course->category)->name ?? 'Sin categoría' }}</span>
+                        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                            <div class="relative">
+                                <img src="{{ $course->image ? asset($course->image) : asset('images/course'.($loop->index % 3 + 1).'.png') }}" 
+                                     alt="{{ $course->title }}"
+                                     class="w-full h-48 object-cover">
+                                <div class="absolute top-2 right-2 flex space-x-2">
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                        {{ $course->language ?? 'General' }}
+                                    </span>
+                                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">
+                                        {{ $course->level }}
+                                    </span>
                                 </div>
-                                <div class="course-footer">
-                                    <a href="{{ route('courses.show', $course) }}" class="btn btn-sm {{ ['btn-yellow', 'btn-blue', 'btn-green', 'btn-pink', 'btn-purple'][($loop->index % 5)] }}">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="text-lg font-semibold mb-2">{{ $course->title }}</h3>
+                                <p class="text-gray-600 text-sm mb-4">{{ Str::limit($course->description, 100) }}</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-500">{{ optional($course->category)->name ?? 'Sin categoría' }}</span>
+                                    <a href="{{ route('courses.show', $course) }}" class="btn btn-blue">
                                         Ver Curso
                                     </a>
                                 </div>
                             </div>
-                            <div class="note-corner"></div>
                         </div>
                     @endforeach
                 </div>

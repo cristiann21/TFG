@@ -11,13 +11,7 @@
                     {{ auth()->user()->name }}
                 </h1>
                 <div class="flex space-x-4">
-                    @if(auth()->user()->isTeacher())
-                        <a href="{{ route('profile.courses') }}" class="btn btn-primary">
-                            <i class="fas fa-chalkboard mr-2"></i>
-                            Mis Cursos Creados
-                        </a>
-                    @endif
-                    <a href="{{ route('profile.edit') }}" class="btn btn-secondary">
+                    <a href="{{ route('profile.edit') }}" class="btn btn-primary">
                         <i class="fas fa-edit mr-2"></i>
                         Editar Perfil
                     </a>
@@ -52,41 +46,25 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <!-- Información Personal -->
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h2 class="text-xl font-semibold mb-4 flex items-center">
-                        <i class="fas fa-user-circle mr-2"></i>
-                        Información Personal
-                    </h2>
+                    <h2 class="text-xl font-semibold mb-4">Información Personal</h2>
                     <div class="space-y-3">
                         <div class="flex items-center">
-                            <i class="fas fa-user text-gray-500 w-6"></i>
-                            Nombre: <span class="ml-2">{{ auth()->user()->name }}</span>
-                        </div>
-                        <div class="flex items-center">
                             <i class="fas fa-envelope text-gray-500 w-6"></i>
-                            Email: <span class="ml-2">{{ auth()->user()->email }}</span>
+                            <span class="ml-2">Correo: ovejaanonima0@gmail.com</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-user-tag text-gray-500 w-6"></i>
-                            <span class="ml-2">
-                                @if(auth()->user()->isTeacher())
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        <i class="fas fa-chalkboard-teacher mr-1"></i>
-                                        Rol: Profesor
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        <i class="fas fa-user-graduate mr-1"></i>
-                                        Rol: Estudiante
-                                    </span>
-                                @endif
-                            </span>
+                            <span class="ml-2">Rol: Profesor</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar text-gray-500 w-6"></i>
+                            <span class="ml-2">Miembro desde {{ auth()->user()->created_at->format('d/m/Y') }}</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Estadísticas -->
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-                    
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
                             <span class="flex items-center">

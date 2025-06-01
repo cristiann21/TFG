@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -63,15 +64,35 @@ class AuthController extends Controller
             'terms.accepted' => 'Debes aceptar los términos y condiciones.',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            DB::beginTransaction();
 
-        Auth::login($user);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        return redirect('/')->with('success', '¡Bienvenido a PinCode! Tu cuenta ha sido creada exitosamente.');
+            // Crear suscripción gratuita por defecto
+            $user->subscriptions()->create([
+                'plan_type' => 'free',
+                'price' => 0,
+                'starts_at' => now(),
+                'ends_at' => null, // Plan gratuito sin expiración
+                'is_active' => true,
+                'payment_status' => 'completed'
+            ]);
+
+            DB::commit();
+
+            Auth::login($user);
+
+            return redirect('/')->with('success', '¡Bienvenido a PinCode! Tu cuenta ha sido creada exitosamente.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()
+                ->with('error', 'Error al crear la cuenta: ' . $e->getMessage());
+        }
     }
 
     public function logout(Request $request)
