@@ -133,7 +133,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
     Route::get('/subscriptions/checkout/{plan}', [SubscriptionController::class, 'checkout'])->name('subscriptions.checkout');
     Route::get('/subscriptions/success/{plan}', [SubscriptionController::class, 'success'])->name('subscriptions.success');
-    Route::get('/subscriptions/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+    Route::post('/subscriptions/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
 });
 
 Route::get('/practica-html', function() {
