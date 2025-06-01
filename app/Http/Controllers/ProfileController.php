@@ -72,7 +72,10 @@ class ProfileController extends Controller
         $courses = Course::whereHas('users', function($query) use ($user) {
             $query->where('users.id', $user->id);
         })
-        ->where('instructor_id', '!=', $user->id) // Excluir cursos creados por el usuario
+        ->where(function($query) use ($user) {
+            $query->where('instructor_id', '!=', $user->id)
+                  ->where('created_by', '!=', $user->id);
+        })
         ->orderBy('created_at', 'desc')
         ->get();
         
