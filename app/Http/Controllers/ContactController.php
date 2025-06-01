@@ -17,8 +17,8 @@ class ContactController extends Controller
             'message' => 'required|string',
         ]);
 
-        // Enviar email
-        Mail::to('contacto@pincode.com')->send(new ContactFormMail($validated));
+        // Enviar email solo a la dirección configurada en MAIL_FROM_ADDRESS
+        Mail::to(config('mail.from.address'))->send(new ContactFormMail($validated));
 
         return redirect()->back()->with('success', '¡Gracias por tu mensaje! Te responderemos pronto.');
     }
