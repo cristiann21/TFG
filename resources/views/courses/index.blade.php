@@ -2,6 +2,13 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
+    <!-- Banner para crear curso propio -->
+    @if(auth()->check() && !auth()->user()->isTeacher())
+    <div style="background: #fffbe6; border: 2px solid #ffe066; color: #856404; border-radius: 10px; padding: 20px; margin-bottom: 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); text-align: center;">
+        <span style="font-size: 1.2rem; font-weight: 600; display: block; margin-bottom: 8px;">¿Quieres crear tu propio curso?</span>
+        <a href="{{ route('teacher-request.show') }}" style="color: #0056b3; text-decoration: underline; font-weight: bold; font-size: 1rem;">Accede a este enlace</a>
+    </div>
+    @endif
     @if(session('error'))
         <div class="postit-note red-note mb-8">
             <div class="flex flex-col">

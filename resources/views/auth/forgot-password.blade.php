@@ -39,7 +39,6 @@
     </div>
 </div>
 @endsection
-
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 @endpush

@@ -115,7 +115,7 @@
                         @enderror
                         @if($course->image)
                             <div class="mt-2">
-                                <img src="{{ asset($course->image) }}" alt="Imagen actual" class="h-32 w-auto">
+                                <img src="{{ asset($course->image) }}" alt="Imagen actual" style="width: 400px; height: 200px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);">
                             </div>
                         @endif
                     </div>

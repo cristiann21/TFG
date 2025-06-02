@@ -33,9 +33,9 @@
                     @foreach($cartItems as $item)
                         <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
                             <div class="flex items-center space-x-4">
-                                <img src="{{ $item->course->image ? asset($item->course->image) : asset('images/course1.png') }}" 
+                                <img src="{{ $item->course->image ? asset($item->course->image) : asset('images/course1.png') }}"
                                      alt="{{ $item->course->title }}"
-                                     class="w-20 h-20 object-cover rounded-lg">
+                                     style="width: 400px; height: 200px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);">
                                 <div>
                                     <h3 class="font-medium">{{ $item->course->title }}</h3>
                                     <p class="text-sm text-gray-600">{{ optional($item->course->instructor)->name ?? 'Profesor' }}</p>

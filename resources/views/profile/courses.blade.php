@@ -30,9 +30,9 @@
                 @foreach($courses as $course)
                     <div class="bg-white rounded-lg shadow-md overflow-hidden">
                         <div class="relative">
-                            <img src="{{ $course->image ? asset($course->image) : asset('images/course1.png') }}" 
+                            <img src="{{ $course->image ? asset($course->image) : asset('images/course1.png') }}"
                                  alt="{{ $course->title }}"
-                                 class="w-full h-48 object-cover">
+                                 style="width: 400px; height: 200px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);">
                             <div class="absolute top-2 right-2">
                                 <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">
                                     {{ $course->level }}

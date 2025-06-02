@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Recuperar Contraseña - PinCode</title>
+    <title>Restablecer Contraseña - PinCode</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,50 +11,62 @@
             margin: 0 auto;
             padding: 20px;
         }
-        .container {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 30px;
+        .header {
             text-align: center;
+            margin-bottom: 30px;
         }
         .logo {
             max-width: 150px;
             margin-bottom: 20px;
         }
-        h1 {
-            color: #2563eb;
-            margin-bottom: 20px;
+        .content {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 5px;
+            margin-bottom: 30px;
         }
         .button {
             display: inline-block;
-            background-color:rgb(180, 223, 252);
-            color: white;
             padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
             text-decoration: none;
-            border-radius: 6px;
+            border-radius: 5px;
             margin: 20px 0;
         }
         .footer {
-            margin-top: 30px;
+            text-align: center;
             font-size: 12px;
             color: #666;
+            margin-top: 30px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="header">
         <img src="{{ asset('images/logo.png') }}" alt="PinCode Logo" class="logo">
-        <h1>Recuperar Contraseña</h1>
+        <h1>Restablecer Contraseña</h1>
+    </div>
+
+    <div class="content">
         <p>Hola,</p>
-        <p>Hemos recibido una solicitud para restablecer tu contraseña en PinCode. Si no realizaste esta solicitud, puedes ignorar este correo.</p>
+        
+        <p>Has recibido este correo porque solicitaste restablecer tu contraseña en PinCode.</p>
+        
         <p>Para restablecer tu contraseña, haz clic en el siguiente botón:</p>
-        <a href="{{ route('password.reset', ['token' => $token, 'email' => $email]) }}" class="button">
-            Restablecer Contraseña
-        </a>
-        <div class="footer">
-            <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
-            <p>&copy; {{ date('Y') }} PinCode. Todos los derechos reservados.</p>
+        
+        <div style="text-align: center;">
+            <a href="{{ $resetUrl }}" class="button">Restablecer Contraseña</a>
         </div>
+        
+        <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
+        
+        <p>Este enlace expirará en 24 horas.</p>
+    </div>
+
+    <div class="footer">
+        <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
+        <p>&copy; {{ date('Y') }} PinCode. Todos los derechos reservados.</p>
     </div>
 </body>
 </html>
