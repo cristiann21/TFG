@@ -18,8 +18,8 @@ class Course extends Model
         'level',
         'image',
         'created_by',
-        'language', // Nuevo campo para el lenguaje de programación
-        'category_id', // Relación con categorías
+        'language',
+        'category_id',
         'instructor_id',
         'video_url',
         'content'

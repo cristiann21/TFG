@@ -80,7 +80,7 @@ class User extends Authenticatable
             return 0;
         }
 
-        $maxCourses = $subscription->plan_type === 'premium' ? 10 : 5; // Premium: 10 cursos, Basic: 5 cursos
+        $maxCourses = $subscription->plan_type === 'premium' ? 25 : 5; // Premium: 25 cursos, Basic: 5 cursos
         $acquiredCourses = $this->courses()->count();
 
         return max(0, $maxCourses - $acquiredCourses);
