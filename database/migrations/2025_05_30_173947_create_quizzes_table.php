@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->integer('passing_score')->default(70);
+            $table->integer('passing_score')->default(50);
             $table->timestamps();
         });
 
