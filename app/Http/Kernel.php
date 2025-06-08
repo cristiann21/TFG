@@ -7,9 +7,9 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 class Kernel extends HttpKernel
 {
     /**
-     * The application's global HTTP middleware stack.
+     * El stack de middleware HTTP global de la aplicación.
      *
-     * These middleware are run during every request to your application.
+     * Estos middleware se ejecutan durante cada petición a la aplicación.
      *
      * @var array<int, class-string|string>
      */
@@ -24,7 +24,7 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * The application's route middleware groups.
+     * Los grupos de middleware de rutas de la aplicación.
      *
      * @var array<string, array<int, class-string|string>>
      */
@@ -45,9 +45,9 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * The application's middleware aliases.
+     * Los alias de middleware de la aplicación.
      *
-     * Aliases may be used instead of class names to assign middleware to routes.
+     * Los alias pueden usarse en lugar de nombres de clase para asignar middleware a rutas.
      *
      * @var array<string, class-string|string>
      */
@@ -67,9 +67,9 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * Register the application's route middleware.
+     * Registrar el middleware de rutas de la aplicación.
      *
-     * These middleware may be assigned to groups or used individually.
+     * Estos middleware pueden asignarse a grupos o usarse individualmente.
      *
      * @var array<string, class-string|string>
      */
@@ -79,7 +79,7 @@ class Kernel extends HttpKernel
     }
 
     /**
-     * Configure the rate limiters for the application.
+     * Configurar los limitadores de tasa para la aplicación.
      *
      * @return void
      */
@@ -89,7 +89,7 @@ class Kernel extends HttpKernel
     }
 
     /**
-     * Configure the rate limiters for the application.
+     * Configurar los limitadores de tasa para la aplicación.
      *
      * @return void
      */
@@ -99,7 +99,7 @@ class Kernel extends HttpKernel
     }
 
     /**
-     * Configure the rate limiters for the application.
+     * Configurar los limitadores de tasa para la aplicación.
      *
      * @return void
      */
