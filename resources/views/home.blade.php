@@ -73,26 +73,36 @@
                 <h2>Nuestros Cursos Destacados</h2>
             </div>
             
-            <div class="courses-grid">
-                @foreach($featuredCourses as $course)
-                    <div class="course-card {{ ['yellow-note', 'blue-note', 'green-note'][($loop->index % 3)] }}">
-                        <div class="course-image">
-                            <img src="{{ $course->image ? asset($course->image) : asset('images/course'.($loop->index+1).'.png') }}" alt="{{ $course->title }}">
-                            <span class="course-category {{ ['yellow-category', 'blue-category', 'green-category'][($loop->index % 3)] }}">
-                                {{ ['Diseño', 'Programación', 'Marketing'][($loop->index % 3)] }}
-                            </span>
-                        </div>
-                        <div class="course-content">
-                            <h3>{{ $course->title }}</h3>
-                            <p>{{ Str::limit($course->description, 100) }}</p>
-                            <div class="course-footer">
-                                <a href="{{ route('courses.show', $course) }}" class="btn btn-sm {{ ['btn-yellow', 'btn-blue', 'btn-green'][($loop->index % 3)] }}">Ver Curso</a>
-                            </div>
-                        </div>
+            @if($featuredCourses->isEmpty())
+                <div class="flex justify-center items-center min-h-[300px]">
+                    <div class="postit-note yellow-note text-center p-6 max-w-md">
+                        <h3 class="text-xl font-bold mb-3">¡Próximamente!</h3>
+                        <p class="text-gray-600">Estamos preparando nuevos cursos destacados para ti. ¡Vuelve pronto!</p>
                         <div class="note-corner"></div>
                     </div>
-                @endforeach
-            </div>
+                </div>
+            @else
+                <div class="courses-grid">
+                    @foreach($featuredCourses as $course)
+                        <div class="course-card {{ ['yellow-note', 'blue-note', 'green-note'][($loop->index % 3)] }}">
+                            <div class="course-image">
+                                <img src="{{ $course->image ? asset($course->image) : asset('images/course'.($loop->index+1).'.png') }}" alt="{{ $course->title }}">
+                                <span class="course-category {{ ['yellow-category', 'blue-category', 'green-category'][($loop->index % 3)] }}">
+                                    {{ ['Diseño', 'Programación', 'Marketing'][($loop->index % 3)] }}
+                                </span>
+                            </div>
+                            <div class="course-content">
+                                <h3>{{ $course->title }}</h3>
+                                <p>{{ Str::limit($course->description, 100) }}</p>
+                                <div class="course-footer">
+                                    <a href="{{ route('courses.show', $course) }}" class="btn btn-sm {{ ['btn-yellow', 'btn-blue', 'btn-green'][($loop->index % 3)] }}">Ver Curso</a>
+                                </div>
+                            </div>
+                            <div class="note-corner"></div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </section>
 
