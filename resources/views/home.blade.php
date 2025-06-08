@@ -86,7 +86,6 @@
                             <h3>{{ $course->title }}</h3>
                             <p>{{ Str::limit($course->description, 100) }}</p>
                             <div class="course-footer">
-                                <span class="lessons-count">{{ rand(8, 15) }} lecciones</span>
                                 <a href="{{ route('courses.show', $course) }}" class="btn btn-sm {{ ['btn-yellow', 'btn-blue', 'btn-green'][($loop->index % 3)] }}">Ver Curso</a>
                             </div>
                         </div>
