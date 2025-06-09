@@ -4,13 +4,13 @@ Seeder configuarado en DatabaseSeeder :  php artisan db:seed
 
 Para la recuperacion de contraseña se tiene que añadir estas credenciales en el .env y el usuario tiene que estar registrado
 
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=rstpwdpincode@gmail.com
-MAIL_PASSWORD=wypgkxbrhjmndikx
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=rstpwdpincode@gmail.com
+MAIL_MAILER=smtp 
+MAIL_HOST=smtp.gmail.com 
+MAIL_PORT=587 
+MAIL_USERNAME=rstpwdpincode@gmail.com 
+MAIL_PASSWORD=fbditambiprlyjgk
+MAIL_ENCRYPTION=tls 
+MAIL_FROM_ADDRESS=rstpwdpincode@gmail.com 
 MAIL_FROM_NAME="PinCode"
 
 Para el stripe
