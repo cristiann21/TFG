@@ -18,50 +18,45 @@
                 
                 <div class="form-group">
                     <label for="name">Nombre</label>
-                    <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                    <input id="name" type="text" class="form-control @error('name') border-red-500 @enderror" name="name" value="{{ old('name') }}" autocomplete="name" autofocus>
                     @error('name')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
+                        <span style="color: red; text-sm mt-1 block">Por favor, introduce tu nombre</span>
                     @enderror
                 </div>
                 
                 <div class="form-group">
                     <label for="email">Correo Electrónico</label>
-                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+                    <input id="email" type="email" class="form-control @error('email') border-red-500 @enderror" name="email" value="{{ old('email') }}" autocomplete="email">
                     @error('email')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>El correo electrónico ya está en uso</strong>
-                        </span>
+                        <span style="color: red; text-sm mt-1 block">El correo electrónico ya está en uso</span>
                     @enderror
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Contraseña</label>
-                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                    <input id="password" type="password" class="form-control @error('password') border-red-500 @enderror" name="password" autocomplete="new-password">
                     @error('password')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>Las contraseñas no coinciden</strong>
-                        </span>
+                        <span style="color: red; text-sm mt-1 block">La contraseña debe tener al menos 8 caracteres</span>
                     @enderror
                 </div>
                 
                 <div class="form-group">
                     <label for="password_confirmation">Confirmar Contraseña</label>
-                    <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                    <input id="password_confirmation" type="password" class="form-control @error('password_confirmation') border-red-500 @enderror" name="password_confirmation" autocomplete="new-password">
+                    @error('password_confirmation')
+                        <span style="color: red; text-sm mt-1 block">Las contraseñas no coinciden</span>
+                    @enderror
                 </div>
                 
                 <div class="form-terms">
                     <div class="checkbox-wrapper">
-                        <input type="checkbox" name="terms" id="terms" required {{ old('terms') ? 'checked' : '' }}>
+                        <input type="checkbox" name="terms" id="terms" {{ old('terms') ? 'checked' : '' }}>
                         <label for="terms">
                             Acepto los <a href="{{ route('terms') }}" target="_blank">términos y condiciones</a>
                         </label>
                     </div>
                     @error('terms')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>Debes aceptar los términos y condiciones</strong>
-                        </span>
+                        <span style="color: red; text-sm mt-1 block">Debes aceptar los términos y condiciones</span>
                     @enderror
                 </div>
                 

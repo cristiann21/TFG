@@ -18,11 +18,9 @@
                 
                 <div class="form-group">
                     <label for="email">Correo electrónico</label>
-                    <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required autofocus>
+                    <input type="email" id="email" name="email" class="form-control @error('email') border-red-500 @enderror" value="{{ old('email') }}" autofocus>
                     @error('email')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>El correo electrónico no está registrado</strong>
-                        </span>
+                        <span style="color: red; text-sm mt-1 block">El correo electrónico no está registrado</span>
                     @enderror
                 </div>
                 

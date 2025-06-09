@@ -14,7 +14,7 @@
                     <tr class="bg-gray-100">
                         <th class="border-2 border-gray-300 p-4 text-left">Características</th>
                         <th class="border-2 border-gray-300 p-4 text-center">Plan Free</th>
-                        <th class="border-2 border-gray-300 p-4 text-center">Plan de Prueba</th>
+                        <th class="border-2 border-gray-300 p-4 text-center">Plan de Prueba (7 días)</th>
                         <th class="border-2 border-gray-300 p-4 text-center">Plan Premium</th>
                     </tr>
                 </thead>
@@ -28,7 +28,7 @@
                     <tr>
                         <td class="border-2 border-gray-300 p-4">Cursos disponibles</td>
                         <td class="border-2 border-gray-300 p-4 text-center">
-                            <span class="text-red-500">✗</span> Sin acceso a cursos
+                            <span class="text-red-500">✗</span> No
                         </td>
                         <td class="border-2 border-gray-300 p-4 text-center">
                             <span class="text-green-500">✓</span> 5 cursos
@@ -43,10 +43,10 @@
                             <span class="text-green-500">✓</span> Gratuitos
                         </td>
                         <td class="border-2 border-gray-300 p-4 text-center">
-                            <span class="text-green-500">✓</span> Seleccionados
+                            <span class="text-green-500">✓</span> A elegir
                         </td>
                         <td class="border-2 border-gray-300 p-4 text-center">
-                            <span class="text-green-500">✓</span> Todos
+                            <span class="text-green-500">✓</span> A elegir
                         </td>
                     </tr>
                     <tr>

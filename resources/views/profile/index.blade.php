@@ -50,11 +50,11 @@
                     <div class="space-y-3">
                         <div class="flex items-center">
                             <i class="fas fa-envelope text-gray-500 w-6"></i>
-                            <span class="ml-2">Correo: ovejaanonima0@gmail.com</span>
+                            <span class="ml-2">Correo: {{ auth()->user()->email }}</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-user-tag text-gray-500 w-6"></i>
-                            <span class="ml-2">Rol: Profesor</span>
+                            <span class="ml-2">Rol: {{ auth()->user()->isTeacher() ? 'Profesor' : 'Estudiante' }}</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-calendar text-gray-500 w-6"></i>

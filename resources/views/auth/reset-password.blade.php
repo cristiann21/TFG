@@ -15,9 +15,7 @@
                     <label for="email">Correo electrónico</label>
                     <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ $email ?? old('email') }}" required autofocus>
                     @error('email')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>El correo electrónico no está registrado</strong>
-                        </span>
+                        <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
                 
@@ -25,15 +23,16 @@
                     <label for="password">Nueva contraseña</label>
                     <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" required>
                     @error('password')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>La contraseña debe tener al menos 6 caracteres</strong>
-                        </span>
+                        <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
                 
                 <div class="form-group">
                     <label for="password_confirmation">Confirmar contraseña</label>
-                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
+                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" required>
+                    @error('password_confirmation')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
                 
                 <button type="submit" class="btn btn-primary">
@@ -52,4 +51,21 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+<style>
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        font-weight: 500;
+    }
+    
+    .is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+</style>
 @endpush

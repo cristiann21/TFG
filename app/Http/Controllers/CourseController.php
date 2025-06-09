@@ -201,7 +201,24 @@ class CourseController extends Controller
             'language' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'video_url' => 'nullable|url'
+            'video_url' => 'nullable'
+        ], [
+            'title.required' => 'El título del curso es obligatorio',
+            'title.max' => 'El título no puede tener más de 255 caracteres',
+            'description.required' => 'La descripción del curso es obligatoria',
+            'price.required' => 'El precio del curso es obligatorio',
+            'price.numeric' => 'El precio debe ser un número',
+            'price.min' => 'El precio no puede ser negativo',
+            'level.required' => 'El nivel del curso es obligatorio',
+            'level.in' => 'El nivel seleccionado no es válido',
+            'language.required' => 'El lenguaje de programación es obligatorio',
+            'language.max' => 'El lenguaje no puede tener más de 255 caracteres',
+            'category_id.required' => 'La categoría del curso es obligatoria',
+            'category_id.exists' => 'La categoría seleccionada no es válida',
+            'image.required' => 'La imagen del curso es obligatoria',
+            'image.image' => 'El archivo debe ser una imagen',
+            'image.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif',
+            'image.max' => 'La imagen no puede pesar más de 2MB',
         ]);
 
         try {

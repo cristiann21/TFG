@@ -9,62 +9,49 @@
                 Crear Nuevo Curso
             </h1>
 
-            @if(session('success'))
-                <div class="alert alert-success mb-6">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="alert alert-danger mb-6">
-                    <ul>
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+            <h3 class="text-2xl font-bold mb-6">
+                <i class="fas fa-plus-circle mr-2"></i>
+                Campos obligatorios(*)
+            </h3>
 
             <form action="{{ route('courses.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 
                 <div>
                     <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
-                        Título del Curso
+                        Título del Curso*
                     </label>
                     <input
                         type="text"
                         id="title"
                         name="title"
-                        class="form-control @error('title') is-invalid @enderror"
+                        class="form-control @error('title') border-red-500 @enderror"
                         value="{{ old('title') }}"
-                        required
                     >
                     @error('title')
-                        <span class="invalid-feedback">{{ $message }}</span>
+                        <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                        Descripción
+                        Descripción*
                     </label>
                     <textarea
                         id="description"
                         name="description"
                         rows="4"
-                        class="form-control @error('description') is-invalid @enderror"
-                        required
+                        class="form-control @error('description') border-red-500 @enderror"
                     >{{ old('description') }}</textarea>
                     @error('description')
-                        <span class="invalid-feedback">{{ $message }}</span>
+                        <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
-                            Precio (€)
+                            Precio (€)*
                         </label>
                         <input
                             type="number"
@@ -72,24 +59,22 @@
                             name="price"
                             step="0.01"
                             min="0"
-                            class="form-control @error('price') is-invalid @enderror"
+                            class="form-control @error('price') border-red-500 @enderror"
                             value="{{ old('price') }}"
-                            required
                         >
                         @error('price')
-                            <span class="invalid-feedback">{{ $message }}</span>
+                            <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <div>
                         <label for="level" class="block text-sm font-medium text-gray-700 mb-2">
-                            Nivel
+                            Nivel*
                         </label>
                         <select
                             id="level"
                             name="level"
-                            class="form-control @error('level') is-invalid @enderror"
-                            required
+                            class="form-control @error('level') border-red-500 @enderror"
                         >
                             <option value="">Selecciona un nivel</option>
                             <option value="Principiante" {{ old('level') == 'Principiante' ? 'selected' : '' }}>Principiante</option>
@@ -97,7 +82,7 @@
                             <option value="Avanzado" {{ old('level') == 'Avanzado' ? 'selected' : '' }}>Avanzado</option>
                         </select>
                         @error('level')
-                            <span class="invalid-feedback">{{ $message }}</span>
+                            <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -105,30 +90,28 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="language" class="block text-sm font-medium text-gray-700 mb-2">
-                            Lenguaje de Programación
+                            Lenguaje de Programación*
                         </label>
                         <input
                             type="text"
                             id="language"
                             name="language"
-                            class="form-control @error('language') is-invalid @enderror"
+                            class="form-control @error('language') border-red-500 @enderror"
                             value="{{ old('language') }}"
-                            required
                         >
                         @error('language')
-                            <span class="invalid-feedback">{{ $message }}</span>
+                            <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
 
                     <div>
                         <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">
-                            Categoría
+                            Categoría*
                         </label>
                         <select
                             id="category_id"
                             name="category_id"
-                            class="form-control @error('category_id') is-invalid @enderror"
-                            required
+                            class="form-control @error('category_id') border-red-500 @enderror"
                         >
                             <option value="">Selecciona una categoría</option>
                             @foreach($categories as $category)
@@ -138,24 +121,24 @@
                             @endforeach
                         </select>
                         @error('category_id')
-                            <span class="invalid-feedback">{{ $message }}</span>
+                            <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
 
                 <div>
                     <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
-                        Imagen del Curso
+                        Imagen del Curso*       
                     </label>
                     <input
                         type="file"
                         id="image"
                         name="image"
                         accept="image/*"
-                        class="form-control @error('image') is-invalid @enderror"
+                        class="form-control @error('image') border-red-500 @enderror"
                     >
                     @error('image')
-                        <span class="invalid-feedback">{{ $message }}</span>
+                        <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                     <p class="mt-1 text-sm text-gray-500">
                         Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 2MB
@@ -163,9 +146,9 @@
                 </div>
 
                 <div class="mb-6">
-                    <label for="video_url" class="block text-sm font-medium text-gray-700">URL del Video (YouTube)</label>
-                    <input type="url" name="video_url" id="video_url" placeholder="https://youtu.be/..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    <p class="mt-1 text-sm text-gray-500">Pega la URL del video de YouTube que quieres incluir en el curso.</p>
+                    <label for="video_url" class="block text-sm font-medium text-gray-700">Enlace</label>
+                    <input type="url" name="video_url" id="video_url"  class="form-control @error('video_url') border-red-500 @enderror" value="{{ old('video_url') }}">
+
                 </div>
 
                 <div class="mb-6 p-4 bg-blue-50 rounded-lg">

@@ -84,11 +84,11 @@
                             id="motivation"
                             name="motivation"
                             rows="4"
-                            class="form-control @error('motivation') is-invalid @enderror"
-                            required
+                            class="form-control @error('motivation') border-red-500 @enderror"
+                            
                         >{{ old('motivation') }}</textarea>
                         @error('motivation')
-                            <span class="invalid-feedback">{{ $message }}</span>
+                            <span style="color: red; text-sm mt-1 block">Por favor, explica tu motivación para ser profesor</span>
                         @enderror
                      
                     </div>
@@ -102,11 +102,10 @@
                             id="experience"
                             name="experience"
                             rows="4"
-                            class="form-control @error('experience') is-invalid @enderror"
-                            required
+                            class="form-control @error('experience') border-red-500 @enderror"
                         >{{ old('experience') }}</textarea>
                         @error('experience')
-                            <span class="invalid-feedback">{{ $message }}</span>
+                            <span style="color: red; text-sm mt-1 block">Por favor, describe tu experiencia y conocimientos</span>
                         @enderror
                        
                     </div>

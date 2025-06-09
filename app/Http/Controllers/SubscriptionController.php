@@ -26,9 +26,9 @@ class SubscriptionController extends Controller
         'trial' => [
             'name' => 'Plan de Prueba',
             'price' => 0,
-            'course_limit' => 3,
+            'course_limit' => 5,
             'features' => [
-                'Acceso a 3 cursos seleccionados',
+                'Acceso a 5 cursos seleccionados',
                 'Actualizaciones mensuales',
                 'Soporte por email',
                 'Acceso a recursos básicos'
