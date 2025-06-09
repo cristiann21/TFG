@@ -20,7 +20,7 @@
                     <label for="name">Nombre</label>
                     <input id="name" type="text" class="form-control @error('name') border-red-500 @enderror" name="name" value="{{ old('name') }}" autocomplete="name" autofocus>
                     @error('name')
-                        <span style="color: red; text-sm mt-1 block">Por favor, introduce tu nombre</span>
+                        <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
                 
@@ -28,7 +28,7 @@
                     <label for="email">Correo Electrónico</label>
                     <input id="email" type="email" class="form-control @error('email') border-red-500 @enderror" name="email" value="{{ old('email') }}" autocomplete="email">
                     @error('email')
-                        <span style="color: red; text-sm mt-1 block">El correo electrónico ya está en uso</span>
+                        <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
                 
@@ -36,7 +36,7 @@
                     <label for="password">Contraseña</label>
                     <input id="password" type="password" class="form-control @error('password') border-red-500 @enderror" name="password" autocomplete="new-password">
                     @error('password')
-                        <span style="color: red; text-sm mt-1 block">La contraseña debe tener al menos 8 caracteres</span>
+                        <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
                 
@@ -44,7 +44,7 @@
                     <label for="password_confirmation">Confirmar Contraseña</label>
                     <input id="password_confirmation" type="password" class="form-control @error('password_confirmation') border-red-500 @enderror" name="password_confirmation" autocomplete="new-password">
                     @error('password_confirmation')
-                        <span style="color: red; text-sm mt-1 block">Las contraseñas no coinciden</span>
+                        <span style="color: red; text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
                 
